@@ -1,13 +1,11 @@
 package com.resort.platform.backnode;
 
-import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
-import com.ulisesbocchio.jasyptspringboot.annotation.EncryptablePropertySource;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 @SpringBootApplication
-@EnableEncryptableProperties
-@EncryptablePropertySource("application.properties")
+@EnableMongoRepositories
 public class BacknodeApplication {
 
     public static void main(String[] args) {
