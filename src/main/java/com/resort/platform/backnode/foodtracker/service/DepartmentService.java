@@ -6,7 +6,10 @@ import com.resort.platform.backnode.foodtracker.model.Department;
 import com.resort.platform.backnode.foodtracker.repo.DepartmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -29,4 +32,20 @@ public class DepartmentService {
         );
     }
 
+    public void addEmployeeToDepartment(String employeeNumber, String departmentName) {
+        Optional<Department> departmentOptional = departmentRepository.getDepartmentByDepartmentName(departmentName);
+        if (departmentOptional.isPresent()) {
+            Department department = departmentOptional.get();
+            if(CollectionUtils.isEmpty(department.getEmployees())) {
+                department.setEmployees(new ArrayList<>(List.of(employeeNumber)));
+            } else {
+                if(!department.getEmployees().contains(employeeNumber)) {
+                    department.getEmployees().add(employeeNumber);
+                }
+            }
+            departmentRepository.save(department);
+        } else {
+            throw new DepartmentNotFoundException("Department: " + departmentName + " not found");
+        }
+    }
 }

@@ -22,5 +22,6 @@ public class Department {
     @NotNull
     @Indexed(unique = true)
     private String departmentName;
+    @NotNull
     private ArrayList<String> employees;
 }

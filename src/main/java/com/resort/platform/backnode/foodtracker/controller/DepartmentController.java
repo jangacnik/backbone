@@ -2,6 +2,7 @@ package com.resort.platform.backnode.foodtracker.controller;
 
 import com.resort.platform.backnode.foodtracker.exception.DepartmentNotFoundException;
 import com.resort.platform.backnode.foodtracker.model.Department;
+import com.resort.platform.backnode.foodtracker.model.rest.request.AddEmployeeToDepartmentRequest;
 import com.resort.platform.backnode.foodtracker.service.DepartmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,13 @@ public class DepartmentController {
     @PostMapping
     public ResponseEntity<Void> addNewDepartment(@RequestBody Department department) {
         departmentService.addNewDepartment(department);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/employee")
+    public ResponseEntity<Void> addEmployeeToDepartment(@RequestBody AddEmployeeToDepartmentRequest bodyData) {
+        departmentService.addEmployeeToDepartment(bodyData.getEmployeeNumber(), bodyData.getDepartment());
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
