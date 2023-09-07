@@ -1,7 +1,6 @@
 package com.resort.platform.backnode.auth.service;
 
 import com.resort.platform.backnode.auth.model.User;
-import com.resort.platform.backnode.auth.model.enums.Role;
 import com.resort.platform.backnode.auth.model.rest.request.SignIn;
 import com.resort.platform.backnode.auth.model.rest.request.SignUp;
 import com.resort.platform.backnode.auth.model.rest.response.JwtResponse;
@@ -12,6 +11,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +27,7 @@ public class AuthenticationService implements AuthenticationServiceInterface {
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
                 .email(request.getEmail()).password(passwordEncoder.encode(request.getPassword()))
-                .role(Role.USER).build();
+                .roles(request.getRoles() != null ? request.getRoles() : new ArrayList<>()).build();
         userRepository.save(user);
         var jwt = jwtService.generateToken(user);
         return JwtResponse.builder().token(jwt).build();
