@@ -1,8 +1,12 @@
 package com.resort.platform.backnode.foodtracker.service;
 
+import com.resort.platform.backnode.auth.model.User;
+import com.resort.platform.backnode.auth.repo.UserRepository;
 import com.resort.platform.backnode.foodtracker.exception.DepartmentAlreadyExistsException;
 import com.resort.platform.backnode.foodtracker.exception.DepartmentNotFoundException;
 import com.resort.platform.backnode.foodtracker.model.Department;
+import com.resort.platform.backnode.foodtracker.model.rest.response.DepartmentWithUsersResponse;
+import com.resort.platform.backnode.foodtracker.model.rest.response.FoodTrackerUser;
 import com.resort.platform.backnode.foodtracker.repo.DepartmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +20,8 @@ import java.util.Optional;
 public class DepartmentService {
     @Autowired
     private DepartmentRepository departmentRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     public void addNewDepartment(Department department) throws DepartmentAlreadyExistsException {
         Optional<Department> departmentOptional = departmentRepository.getDepartmentByDepartmentName(department.getDepartmentName());
@@ -25,11 +31,28 @@ public class DepartmentService {
         departmentRepository.save(department);
     }
 
-    public Department getDepartmentByName(String departmentName) throws DepartmentNotFoundException {
-        return departmentRepository.getDepartmentByDepartmentName(departmentName)
-                .orElseThrow(
+    public DepartmentWithUsersResponse getDepartmentByName(String departmentName) throws DepartmentNotFoundException {
+        Department department = departmentRepository.getDepartmentByDepartmentName(departmentName).orElseThrow(
                 () -> new DepartmentNotFoundException("Department: " + departmentName + " not found")
         );
+        List<FoodTrackerUser> foodTrackerUsers = new ArrayList<>();
+        if (!CollectionUtils.isEmpty(department.getEmployees())) {
+            for (String employeeId : department.getEmployees()) {
+                Optional<User> userOptional = userRepository.findUserByEmployeeNumber(employeeId);
+                if (userOptional.isPresent()) {
+                    User tempUser = userOptional.get();
+                    foodTrackerUsers.add(new FoodTrackerUser(tempUser.getLastName(), tempUser.getFirstName(), tempUser.getEmail(), tempUser.getEmployeeNumber()));
+                }
+            }
+
+        }
+        return DepartmentWithUsersResponse
+                .builder()
+                .id(department.getId())
+                .departmentName(department.getDepartmentName())
+                .employees(department.getEmployees())
+                .users(foodTrackerUsers)
+                .build();
     }
 
     public void addEmployeeToDepartment(String employeeNumber, String departmentName) {
