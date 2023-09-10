@@ -71,4 +71,13 @@ public class DepartmentService {
             throw new DepartmentNotFoundException("Department: " + departmentName + " not found");
         }
     }
+
+
+    public List<Department> getDepartmentsWithUser(String employeeId) {
+        return departmentRepository.findAllByEmployeesContaining(employeeId).orElseThrow(() -> new DepartmentNotFoundException("Departments with user not found"));
+    }
+
+    public Department saveOrUpdateDepartment(Department department) {
+        return departmentRepository.save(department);
+    }
 }
