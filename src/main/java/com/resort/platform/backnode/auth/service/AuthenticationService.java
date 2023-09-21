@@ -2,6 +2,7 @@ package com.resort.platform.backnode.auth.service;
 
 import com.resort.platform.backnode.auth.exceptions.UserAlreadyExistsExceptions;
 import com.resort.platform.backnode.auth.model.User;
+import com.resort.platform.backnode.auth.model.enums.Role;
 import com.resort.platform.backnode.auth.model.rest.request.SignIn;
 import com.resort.platform.backnode.auth.model.rest.request.NewUserRequest;
 import com.resort.platform.backnode.auth.model.rest.response.JwtResponse;
@@ -46,5 +47,18 @@ public class AuthenticationService implements AuthenticationServiceInterface {
                 .orElseThrow(() -> new IllegalArgumentException("Invalid email or password"));
         var jwt = jwtService.generateToken(user);
         return JwtResponse.builder().token(jwt).build();
+    }
+
+    public JwtResponse signinAdmin(SignIn request) {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+        var user = userRepository.findUserByEmail(request.getEmail())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid email or password"));
+        if (user.getRoles().contains(Role.ADMIN)) {
+            var jwt = jwtService.generateToken(user);
+            return JwtResponse.builder().token(jwt).build();
+        }
+        // TODO replace with exception
+        return null;
     }
 }
