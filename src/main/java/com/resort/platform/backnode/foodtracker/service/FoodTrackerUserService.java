@@ -38,7 +38,7 @@ public class FoodTrackerUserService {
     }
 
     public FoodTrackerUserWithDepartment getFoodTrackerUser(String username) {
-        Optional<User> userOptional = userRepository.findUserByEmail(username);
+        Optional<User> userOptional = userRepository.findUserByEmployeeNumber(username);
         if(userOptional.isPresent()) {
             User user = userOptional.get();
             List<Department> departments = departmentService.getDepartmentsWithUser(user.getEmployeeNumber());
