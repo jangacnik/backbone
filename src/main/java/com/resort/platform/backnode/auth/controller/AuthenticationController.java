@@ -8,10 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -33,5 +30,10 @@ public class AuthenticationController {
     @PostMapping("/signinadmin")
     public ResponseEntity<JwtResponse> signinAdmin(@RequestBody SignIn request) {
         return ResponseEntity.ok(authenticationService.signinAdmin(request));
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<JwtResponse> refresh(@RequestHeader(value = "refreshToken") String request) {
+        return ResponseEntity.ok(authenticationService.refresh(request));
     }
 }

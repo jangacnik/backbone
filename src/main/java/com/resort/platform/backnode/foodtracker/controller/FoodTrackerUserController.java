@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/department/user")
 @AllArgsConstructor
@@ -31,6 +33,11 @@ public class FoodTrackerUserController {
     @GetMapping
     public ResponseEntity<FoodTrackerUserWithDepartment> getFoodTrackerUser(@RequestBody FoodTrackerUserRequest fUser) {
         return ResponseEntity.ok(foodTrackerUserService.getFoodTrackerUser(fUser.getUsername()));
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<FoodTrackerUserWithDepartment>> getFoodTrackerUser() {
+        return ResponseEntity.ok(foodTrackerUserService.getAllFoodTrackerUsers());
     }
 
 }

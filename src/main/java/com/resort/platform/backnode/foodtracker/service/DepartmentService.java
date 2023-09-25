@@ -72,6 +72,10 @@ public class DepartmentService {
         }
     }
 
+    public List<Department> getAllDepartments() {
+        return departmentRepository.findAll();
+    }
+
 
     public List<Department> getDepartmentsWithUser(String employeeId) {
         return departmentRepository.findAllByEmployeesContaining(employeeId).orElseThrow(() -> new DepartmentNotFoundException("Departments with user not found"));

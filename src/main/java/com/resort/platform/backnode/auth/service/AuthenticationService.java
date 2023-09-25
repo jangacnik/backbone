@@ -11,6 +11,8 @@ import com.resort.platform.backnode.auth.service.interfaces.AuthenticationServic
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +26,7 @@ public class AuthenticationService implements AuthenticationServiceInterface {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final UserService userService;
     @Override
     public void addNewUser(NewUserRequest request) {
         Optional<User> userOptional = userRepository.findUserByEmail(request.getEmail());
@@ -45,8 +48,7 @@ public class AuthenticationService implements AuthenticationServiceInterface {
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
         var user = userRepository.findUserByEmail(request.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid email or password"));
-        var jwt = jwtService.generateToken(user);
-        return JwtResponse.builder().token(jwt).build();
+        return jwtService.generateToken(user);
     }
 
     public JwtResponse signinAdmin(SignIn request) {
@@ -55,10 +57,20 @@ public class AuthenticationService implements AuthenticationServiceInterface {
         var user = userRepository.findUserByEmail(request.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid email or password"));
         if (user.getRoles().contains(Role.ADMIN)) {
-            var jwt = jwtService.generateToken(user);
-            return JwtResponse.builder().token(jwt).build();
+            return jwtService.generateToken(user);
         }
         // TODO replace with exception
         return null;
+    }
+
+    public JwtResponse refresh(String token) {
+        String refreshToken = token.substring(7);
+        String userEmail = jwtService.extractUserName(refreshToken);
+        UserDetails userDetails = userService.userDetailsService()
+                .loadUserByUsername(userEmail);
+        if (jwtService.isTokenValid(refreshToken, userDetails)) {
+            return jwtService.generateToken(userDetails);
+        }
+        throw  new UsernameNotFoundException("Not found");
     }
 }

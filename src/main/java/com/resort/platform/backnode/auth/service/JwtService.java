@@ -1,5 +1,6 @@
 package com.resort.platform.backnode.auth.service;
 
+import com.resort.platform.backnode.auth.model.rest.response.JwtResponse;
 import com.resort.platform.backnode.auth.service.interfaces.JwtServiceInterface;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -26,11 +27,19 @@ public class JwtService implements JwtServiceInterface {
     }
 
     @Override
-    public String generateToken(UserDetails userDetails) {
+    public JwtResponse generateToken(UserDetails userDetails) {
         String authorities = userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
-        return generateToken(authorities, userDetails);
+        return new JwtResponse(generateToken(authorities, userDetails), generateRefreshToken(userDetails));
+    }
+
+    public String generateRefreshToken(UserDetails userDetails) {
+        return Jwts.builder()
+                .setSubject(userDetails.getUsername())
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + 2000 * 60 * 24))
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256).compact();
     }
 
     @Override
@@ -50,6 +59,7 @@ public class JwtService implements JwtServiceInterface {
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256).compact();
     }
+
 
     private boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
