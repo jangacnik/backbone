@@ -1,6 +1,8 @@
 package com.resort.platform.backnode.foodtracker.controller;
 
+import com.resort.platform.backnode.foodtracker.model.rest.MealEntryWithUser;
 import com.resort.platform.backnode.foodtracker.model.rest.request.AddTrackingEntryRequest;
+import com.resort.platform.backnode.foodtracker.model.rest.response.FoodTrackerUserWithDepartment;
 import com.resort.platform.backnode.foodtracker.model.rest.response.FoodTrackingResponse;
 import com.resort.platform.backnode.foodtracker.service.TrackingService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,5 +26,10 @@ public class TrackingController {
     public ResponseEntity<FoodTrackingResponse> getCurrentMonthTracking() {
         FoodTrackingResponse foodTrackingResponse = trackingService.getCurrentMonthTracking();
         return ResponseEntity.ok(foodTrackingResponse);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<MealEntryWithUser> getCurretnFoodTrackerUser(@PathVariable String id) {
+        return ResponseEntity.ok(trackingService.getTrackingForCurrentUser(id));
     }
 }

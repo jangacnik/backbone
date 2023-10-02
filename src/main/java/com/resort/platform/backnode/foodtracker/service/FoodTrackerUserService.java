@@ -3,15 +3,18 @@ package com.resort.platform.backnode.foodtracker.service;
 import com.resort.platform.backnode.auth.model.User;
 import com.resort.platform.backnode.auth.repo.UserRepository;
 import com.resort.platform.backnode.auth.service.AuthenticationService;
+import com.resort.platform.backnode.auth.service.JwtService;
 import com.resort.platform.backnode.foodtracker.exception.InvalidRequestException;
 import com.resort.platform.backnode.foodtracker.model.Department;
 import com.resort.platform.backnode.foodtracker.model.rest.request.NewFoodTrackerUserRequest;
+import com.resort.platform.backnode.foodtracker.model.rest.response.FoodTrackerUser;
 import com.resort.platform.backnode.foodtracker.model.rest.response.FoodTrackerUserWithDepartment;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +26,7 @@ public class FoodTrackerUserService {
     private AuthenticationService authenticationService;
     private UserRepository userRepository;
     private DepartmentService departmentService;
+    private JwtService jwtService;
 
     public void addNewFoodTrackerUser(NewFoodTrackerUserRequest newFoodTrackerUserRequest) {
         if (StringUtils.isBlank(newFoodTrackerUserRequest.getEmployeeNumber())) {
@@ -37,7 +41,7 @@ public class FoodTrackerUserService {
     }
 
     public FoodTrackerUserWithDepartment getFoodTrackerUser(String username) {
-        Optional<User> userOptional = userRepository.findUserByEmployeeNumber(username);
+        Optional<User> userOptional = userRepository.findUserByEmployeeNumberOrEmail(username, username);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
             List<Department> departments = departmentService.getDepartmentsWithUser(user.getEmployeeNumber());
@@ -81,5 +85,9 @@ public class FoodTrackerUserService {
         return null;
     }
 
-
+    public FoodTrackerUserWithDepartment getCurretUser(String token) {
+        String jwt = token.substring(7);
+        String un = jwtService.extractUserName(jwt);
+        return this.getFoodTrackerUser(un);
+    }
 }

@@ -1,5 +1,6 @@
 package com.resort.platform.backnode.foodtracker.service;
 
+import com.resort.platform.backnode.auth.service.JwtService;
 import com.resort.platform.backnode.foodtracker.exception.InvalidRequestException;
 import com.resort.platform.backnode.foodtracker.model.MealEntry;
 import com.resort.platform.backnode.foodtracker.model.MealTracking;
@@ -20,6 +21,7 @@ import java.util.Optional;
 @AllArgsConstructor
 public class TrackingService {
     TrackingRepository trackingRepository;
+    JwtService jwtService;
 
     FoodTrackerUserService foodTrackerUserService;
 
@@ -65,5 +67,10 @@ public class TrackingService {
         meals.put(1, LocalDateTime.now());
         MealEntry mealEntry = new MealEntry(1, meals);
         tracking.getTrackingEntries().put(employeeId, mealEntry);
+    }
+
+    public MealEntryWithUser getTrackingForCurrentUser(String id) {
+        FoodTrackingResponse temp = getCurrentMonthTracking();
+        return temp.getEntries().get(id);
     }
 }

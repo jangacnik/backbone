@@ -40,4 +40,8 @@ public class FoodTrackerUserController {
         return ResponseEntity.ok(foodTrackerUserService.getAllFoodTrackerUsers());
     }
 
+    @GetMapping("/me")
+    public ResponseEntity<FoodTrackerUserWithDepartment> getCurretnFoodTrackerUser(@RequestHeader (name="Authorization") String token) {
+        return ResponseEntity.ok(foodTrackerUserService.getCurretUser(token));
+    }
 }
