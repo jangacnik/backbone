@@ -17,6 +17,12 @@ import java.util.ArrayList;
 public class Department {
     @Id
     private String id;
+
+    public Department(String departmentName, ArrayList<String> employees) {
+        this.departmentName = departmentName;
+        this.employees = employees;
+    }
+
     @NotNull
     @Indexed(unique = true)
     private String departmentName;

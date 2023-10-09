@@ -29,6 +29,10 @@ public class FoodTrackerUserController {
         return ResponseEntity.ok(foodTrackerUserService.deleteFoodTrackerUser(fUser.getUsername()));
 
     }
+    @PutMapping
+    public ResponseEntity<FoodTrackerUserWithDepartment> updateFoodTrackerUser(@RequestBody FoodTrackerUserWithDepartment foodTrackerUserWithDepartment){
+        return ResponseEntity.ok(null);
+    }
 
     @GetMapping
     public ResponseEntity<FoodTrackerUserWithDepartment> getFoodTrackerUser(@RequestBody FoodTrackerUserRequest fUser) {

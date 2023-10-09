@@ -3,14 +3,21 @@ package com.resort.platform.backnode.foodtracker.service;
 import com.resort.platform.backnode.auth.service.JwtService;
 import com.resort.platform.backnode.foodtracker.exception.InvalidRequestException;
 import com.resort.platform.backnode.foodtracker.model.MealEntry;
+import com.resort.platform.backnode.foodtracker.model.MealPrice;
 import com.resort.platform.backnode.foodtracker.model.MealTracking;
 import com.resort.platform.backnode.foodtracker.model.rest.MealEntryWithUser;
 import com.resort.platform.backnode.foodtracker.model.rest.response.FoodTrackerUserWithDepartment;
 import com.resort.platform.backnode.foodtracker.model.rest.response.FoodTrackingResponse;
+import com.resort.platform.backnode.foodtracker.repo.MealPricerepository;
 import com.resort.platform.backnode.foodtracker.repo.TrackingRepository;
 import lombok.AllArgsConstructor;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -19,9 +26,12 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
+@EnableAutoConfiguration
 public class TrackingService {
     TrackingRepository trackingRepository;
     JwtService jwtService;
+
+    MealPricerepository mealPricerepository;
 
     FoodTrackerUserService foodTrackerUserService;
 
@@ -72,5 +82,12 @@ public class TrackingService {
     public MealEntryWithUser getTrackingForCurrentUser(String id) {
         FoodTrackingResponse temp = getCurrentMonthTracking();
         return temp.getEntries().get(id);
+    }
+
+    public MealPrice getMealPrice() {
+        return mealPricerepository.findFirstByOrderByLastUpdatedDesc().orElseThrow(() -> new RuntimeException("No price found"));
+    }
+    public void setNewMealPrice(MealPrice mealPrice) {
+        mealPricerepository.save(mealPrice);
     }
 }

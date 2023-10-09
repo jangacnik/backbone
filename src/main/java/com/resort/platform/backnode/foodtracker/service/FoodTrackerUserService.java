@@ -6,6 +6,7 @@ import com.resort.platform.backnode.auth.service.AuthenticationService;
 import com.resort.platform.backnode.auth.service.JwtService;
 import com.resort.platform.backnode.foodtracker.exception.InvalidRequestException;
 import com.resort.platform.backnode.foodtracker.model.Department;
+import com.resort.platform.backnode.foodtracker.model.rest.request.FoodTrackerUserRequest;
 import com.resort.platform.backnode.foodtracker.model.rest.request.NewFoodTrackerUserRequest;
 import com.resort.platform.backnode.foodtracker.model.rest.response.FoodTrackerUser;
 import com.resort.platform.backnode.foodtracker.model.rest.response.FoodTrackerUserWithDepartment;
@@ -75,7 +76,6 @@ public class FoodTrackerUserService {
         if (userOptional.isPresent()) {
             User deletedUser = userOptional.get();
             List<Department> optionalDepartmentList = departmentService.getDepartmentsWithUser(deletedUser.getEmployeeNumber());
-
             for (Department dep : optionalDepartmentList) {
                 dep.getEmployees().remove(deletedUser.getEmployeeNumber());
                 departmentService.saveOrUpdateDepartment(dep);
@@ -89,5 +89,9 @@ public class FoodTrackerUserService {
         String jwt = token.substring(7);
         String un = jwtService.extractUserName(jwt);
         return this.getFoodTrackerUser(un);
+    }
+
+    public FoodTrackerUserWithDepartment updateUser(FoodTrackerUserWithDepartment foodTrackerUserWithDepartment) {
+        return null;
     }
 }

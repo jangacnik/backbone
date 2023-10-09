@@ -57,7 +57,11 @@ public class DepartmentService {
 
     public void addEmployeeToDepartment(String employeeNumber, String departmentName) {
         Optional<Department> departmentOptional = departmentRepository.getDepartmentByDepartmentName(departmentName);
-        if (departmentOptional.isPresent()) {
+        if (departmentOptional.isEmpty()) {
+            ArrayList<String> emp = new ArrayList<String>();
+            emp.add(employeeNumber);
+            addNewDepartment(new Department(departmentName, emp));
+        } else {
             Department department = departmentOptional.get();
             if(CollectionUtils.isEmpty(department.getEmployees())) {
                 department.setEmployees(new ArrayList<>(List.of(employeeNumber)));
@@ -67,9 +71,8 @@ public class DepartmentService {
                 }
             }
             departmentRepository.save(department);
-        } else {
-            throw new DepartmentNotFoundException("Department: " + departmentName + " not found");
         }
+
     }
 
     public List<Department> getAllDepartments() {
