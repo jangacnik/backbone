@@ -10,5 +10,4 @@ public interface UserRepository extends MongoRepository<User, String> {
     Optional<User> findUserByEmployeeNumber(String employeeNumber);
     Optional<User> findUserByEmployeeNumberOrEmail(String employeeNumber, String username);
     Optional<User> deleteUserByEmail(String email);
-
 }

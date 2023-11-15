@@ -15,6 +15,7 @@ import org.springframework.util.CollectionUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class DepartmentService {
@@ -78,7 +79,10 @@ public class DepartmentService {
     public List<Department> getAllDepartments() {
         return departmentRepository.findAll();
     }
-
+    public List<String> getAllDepartmentsNames() {
+        List<Department> deps =  departmentRepository.findAll();
+        return deps.stream().map(Department::getDepartmentName).collect(Collectors.toList());
+    }
 
     public List<Department> getDepartmentsWithUser(String employeeId) {
         return departmentRepository.findAllByEmployeesContaining(employeeId).orElseThrow(() -> new DepartmentNotFoundException("Departments with user not found"));
@@ -86,5 +90,14 @@ public class DepartmentService {
 
     public Department saveOrUpdateDepartment(Department department) {
         return departmentRepository.save(department);
+    }
+
+    public void removeUserFromDepartment(String employeeId, String departmentName) {
+        Optional<Department> department = departmentRepository.getDepartmentByDepartmentName(departmentName);
+        if (department.isPresent()) {
+            Department department1 = department.get();
+            department1.getEmployees().remove(employeeId);
+            departmentRepository.save(department1);
+        }
     }
 }

@@ -11,4 +11,6 @@ import lombok.RequiredArgsConstructor;
 public class AddTrackingEntryRequest {
     @NotBlank
     String employeeNumber;
+    @NotBlank
+    String qrPasscode;
 }

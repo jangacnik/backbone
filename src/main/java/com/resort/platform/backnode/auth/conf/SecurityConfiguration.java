@@ -47,13 +47,12 @@ public class SecurityConfiguration {
 
         http.cors(Customizer.withDefaults()).csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
-                        .anyRequest()
-//                        .requestMatchers("/api/v1/auth/**")
-                        .permitAll()
-//                        .requestMatchers("/api/v1/department/**").hasRole("ADMIN")
-//                        .requestMatchers("/api/v1/track/price").hasRole("ADMIN")
-//                        .anyRequest().authenticated())
-                )
+                        .requestMatchers("/api/v1/auth/**").permitAll()
+                        .requestMatchers("/api/v1/reserve").permitAll()
+                        .requestMatchers("/api/v1/department/**").hasRole("ADMIN")
+                        .requestMatchers("/api/v1/track/price").hasRole("ADMIN")
+                        .anyRequest().authenticated())
+
                 .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
                 .authenticationProvider(authenticationProvider()).addFilterBefore(
                         jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

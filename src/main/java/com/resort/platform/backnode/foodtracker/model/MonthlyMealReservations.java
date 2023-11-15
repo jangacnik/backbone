@@ -15,11 +15,9 @@ import java.util.List;
 @Document("reservations")
 @AllArgsConstructor
 @RequiredArgsConstructor
-public class DailyMealReservations {
+public class MonthlyMealReservations {
     @Id
     private String id;
-    @NotBlank
-    private LocalDate reservationDate;
     @NotNull
     private List<MealReservation> mealReservations;
 }

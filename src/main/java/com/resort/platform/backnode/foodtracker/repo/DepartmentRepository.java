@@ -10,4 +10,5 @@ public interface DepartmentRepository extends MongoRepository<Department, String
     Optional<Department> getDepartmentByDepartmentName(String departmentName);
     Optional<List<Department>> findAllByEmployeesContaining(String employeeId);
 
+    Optional<Department> removeByEmployeesContaining(String employeeId);
 }

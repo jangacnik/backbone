@@ -2,38 +2,36 @@ package com.resort.platform.backnode.foodtracker.service;
 
 import com.resort.platform.backnode.auth.service.JwtService;
 import com.resort.platform.backnode.foodtracker.exception.InvalidRequestException;
-import com.resort.platform.backnode.foodtracker.model.MealEntry;
-import com.resort.platform.backnode.foodtracker.model.MealPrice;
-import com.resort.platform.backnode.foodtracker.model.MealTracking;
+import com.resort.platform.backnode.foodtracker.model.*;
 import com.resort.platform.backnode.foodtracker.model.rest.MealEntryWithUser;
 import com.resort.platform.backnode.foodtracker.model.rest.response.FoodTrackerUserWithDepartment;
 import com.resort.platform.backnode.foodtracker.model.rest.response.FoodTrackingResponse;
+import com.resort.platform.backnode.foodtracker.model.rest.response.MealReportModel;
 import com.resort.platform.backnode.foodtracker.repo.MealPricerepository;
+import com.resort.platform.backnode.foodtracker.repo.MealReservationRepository;
 import com.resort.platform.backnode.foodtracker.repo.TrackingRepository;
 import lombok.AllArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 @AllArgsConstructor
 @EnableAutoConfiguration
 public class TrackingService {
     TrackingRepository trackingRepository;
+    MealReservationRepository mealReservationRepository;
     JwtService jwtService;
 
     MealPricerepository mealPricerepository;
 
     FoodTrackerUserService foodTrackerUserService;
+
 
     public void addMealEntry(String employeeId) {
         Calendar calendar = Calendar.getInstance();
@@ -51,16 +49,30 @@ public class TrackingService {
         trackingRepository.save(mealTracking);
     }
 
-    public FoodTrackingResponse getCurrentMonthTracking() {
+    public List<MealReportModel> getCurrentMonthTracking() {
         Calendar calendar = Calendar.getInstance();
+        MealPrice mealPrice = getMealPrice();
+        String month = calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault());
         String trackingId = "tracking_" + calendar.get(Calendar.MONTH) + "_" + calendar.get(Calendar.YEAR);
+        String reservationId = calendar.get(Calendar.YEAR) + "-" + month.toUpperCase()+"_reservation";
         MealTracking mealTracking = trackingRepository.findById(trackingId).orElseThrow(() -> new InvalidRequestException("Tracking does not exist yes"));
-        FoodTrackingResponse foodTrackingResponse = new FoodTrackingResponse(trackingId, new HashMap<>());
+        MonthlyMealReservations monthlyMealReservations = mealReservationRepository.getMonthlyMealReservationsById( reservationId).orElseThrow();
+        List<MealReportModel> mealReport = new ArrayList<>();
         for (Map.Entry<String, MealEntry> entry : mealTracking.getTrackingEntries().entrySet()) {
            FoodTrackerUserWithDepartment foodTrackerUserWithDepartment = foodTrackerUserService.getFoodTrackerUser(entry.getKey());
-           foodTrackingResponse.getEntries().put(foodTrackerUserWithDepartment.getEmployeeNumber(), new MealEntryWithUser( foodTrackerUserWithDepartment, entry.getValue()));
+           MealReportModel mealReportModel = new MealReportModel();
+           mealReportModel.setDepartment(foodTrackerUserWithDepartment.getDepartments());
+           mealReportModel.setName(foodTrackerUserWithDepartment.getFirstName() + " " + foodTrackerUserWithDepartment.getLastName());
+           mealReportModel.setMealCountUsed(entry.getValue().getMealCount());
+           AtomicInteger reservedMealsCount = new AtomicInteger();
+           List<MealReservation> reservedMeals = monthlyMealReservations.getMealReservations().stream().filter(mealReservation ->
+                   mealReservation.getEmployeeNumber().equals(foodTrackerUserWithDepartment.getEmployeeNumber())).toList();
+           reservedMeals.forEach( mealReservation -> reservedMealsCount.addAndGet(mealReservation.getMealType().size()));
+           mealReportModel.setMealCountReserved(reservedMealsCount.get());
+           mealReportModel.setMealTotalPrice(mealPrice.getPrice()*mealReportModel.getMealCountUsed());
+           mealReport.add(mealReportModel);
         }
-        return foodTrackingResponse;
+        return mealReport;
     }
 
     private void addMealToEmployee(String employeeId, MealTracking tracking) {
@@ -80,8 +92,12 @@ public class TrackingService {
     }
 
     public MealEntryWithUser getTrackingForCurrentUser(String id) {
-        FoodTrackingResponse temp = getCurrentMonthTracking();
-        return temp.getEntries().get(id);
+
+        Calendar calendar = Calendar.getInstance();
+        String trackingId = "tracking_" + calendar.get(Calendar.MONTH) + "_" + calendar.get(Calendar.YEAR);
+        MealTracking mealTracking = trackingRepository.findById(trackingId).orElseThrow(() -> new InvalidRequestException("Tracking does not exist yes"));
+        FoodTrackerUserWithDepartment foodTrackerUserWithDepartment = foodTrackerUserService.getFoodTrackerUser(id);
+        return new MealEntryWithUser(foodTrackerUserWithDepartment, mealTracking.getTrackingEntries().get(foodTrackerUserWithDepartment.getEmployeeNumber()));
     }
 
     public MealPrice getMealPrice() {

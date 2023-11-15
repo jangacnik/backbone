@@ -2,6 +2,7 @@ package com.resort.platform.backnode.foodtracker.advice;
 
 import com.resort.platform.backnode.foodtracker.exception.DepartmentAlreadyExistsException;
 import com.resort.platform.backnode.foodtracker.exception.DepartmentNotFoundException;
+import com.resort.platform.backnode.foodtracker.exception.InvalidRequestException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,10 @@ public class DepartmentAdvice extends ResponseEntityExceptionHandler {
     }
     @ExceptionHandler(value = {DepartmentAlreadyExistsException.class})
     protected ResponseEntity<Object> handleAlreadyExistsDepartmentException(RuntimeException ex, WebRequest webRequest) {
+        return handleExceptionInternal(ex, ex.getMessage(), new HttpHeaders(), HttpStatus.CONFLICT, webRequest);
+    }
+    @ExceptionHandler(value = {InvalidRequestException.class})
+    protected ResponseEntity<Object> handleInvalidQrPasscodeException(RuntimeException ex, WebRequest webRequest) {
         return handleExceptionInternal(ex, ex.getMessage(), new HttpHeaders(), HttpStatus.CONFLICT, webRequest);
     }
 }

@@ -6,16 +6,13 @@ import com.resort.platform.backnode.auth.service.AuthenticationService;
 import com.resort.platform.backnode.auth.service.JwtService;
 import com.resort.platform.backnode.foodtracker.exception.InvalidRequestException;
 import com.resort.platform.backnode.foodtracker.model.Department;
-import com.resort.platform.backnode.foodtracker.model.rest.request.FoodTrackerUserRequest;
 import com.resort.platform.backnode.foodtracker.model.rest.request.NewFoodTrackerUserRequest;
-import com.resort.platform.backnode.foodtracker.model.rest.response.FoodTrackerUser;
 import com.resort.platform.backnode.foodtracker.model.rest.response.FoodTrackerUserWithDepartment;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.RequestHeader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -85,13 +82,15 @@ public class FoodTrackerUserService {
         return null;
     }
 
-    public FoodTrackerUserWithDepartment getCurretUser(String token) {
+    public FoodTrackerUserWithDepartment getCurrentUser(String token) {
         String jwt = token.substring(7);
         String un = jwtService.extractUserName(jwt);
         return this.getFoodTrackerUser(un);
     }
 
-    public FoodTrackerUserWithDepartment updateUser(FoodTrackerUserWithDepartment foodTrackerUserWithDepartment) {
-        return null;
+    public void updateUser(FoodTrackerUserWithDepartment updatedUser) {
+        String username = updatedUser.getOldEmail();
+        User old = userRepository.findUserByEmail(username).get();
+        userRepository.save(new User(old.getId(), updatedUser.getEmployeeNumber(), updatedUser.getFirstName(), updatedUser.getLastName(), updatedUser.getEmail(),  old.getPassword(), old.getRoles()));
     }
 }

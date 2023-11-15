@@ -7,14 +7,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.annotation.Id;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
-@RequiredArgsConstructor
 public class MealReservation {
     @Id
     private String id;
     private String employeeNumber;
-    private MealType mealType;
+    private List<MealType> mealType;
     private LocalDate reservationDate;
 }

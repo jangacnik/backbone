@@ -31,6 +31,7 @@ public class FoodTrackerUserController {
     }
     @PutMapping
     public ResponseEntity<FoodTrackerUserWithDepartment> updateFoodTrackerUser(@RequestBody FoodTrackerUserWithDepartment foodTrackerUserWithDepartment){
+        foodTrackerUserService.updateUser(foodTrackerUserWithDepartment);
         return ResponseEntity.ok(null);
     }
 
@@ -46,6 +47,6 @@ public class FoodTrackerUserController {
 
     @GetMapping("/me")
     public ResponseEntity<FoodTrackerUserWithDepartment> getCurretnFoodTrackerUser(@RequestHeader (name="Authorization") String token) {
-        return ResponseEntity.ok(foodTrackerUserService.getCurretUser(token));
+        return ResponseEntity.ok(foodTrackerUserService.getCurrentUser(token));
     }
 }

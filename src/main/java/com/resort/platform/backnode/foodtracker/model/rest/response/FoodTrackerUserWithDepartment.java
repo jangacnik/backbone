@@ -10,7 +10,7 @@ import java.util.List;
 @Getter
 public class FoodTrackerUserWithDepartment extends FoodTrackerUser {
     List<String> departments;
-
+    String oldEmail;
     @Builder
     public FoodTrackerUserWithDepartment(String lastName, String firstName, String email, String employeeNumber, List<String> departments) {
         super(lastName, firstName, email, employeeNumber);

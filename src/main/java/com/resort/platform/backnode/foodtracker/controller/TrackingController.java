@@ -1,15 +1,19 @@
 package com.resort.platform.backnode.foodtracker.controller;
 
+import com.resort.platform.backnode.foodtracker.exception.InvalidRequestException;
 import com.resort.platform.backnode.foodtracker.model.MealPrice;
 import com.resort.platform.backnode.foodtracker.model.rest.MealEntryWithUser;
 import com.resort.platform.backnode.foodtracker.model.rest.request.AddTrackingEntryRequest;
-import com.resort.platform.backnode.foodtracker.model.rest.response.FoodTrackerUserWithDepartment;
 import com.resort.platform.backnode.foodtracker.model.rest.response.FoodTrackingResponse;
+import com.resort.platform.backnode.foodtracker.model.rest.response.MealReportModel;
 import com.resort.platform.backnode.foodtracker.service.TrackingService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/track")
@@ -17,17 +21,25 @@ public class TrackingController {
     @Autowired
     TrackingService trackingService;
 
+    @Value("${com.resort.platform.backnode.meal.passcode}")
+    private String qrPasscode;
+
+    @Value("#{new Double('${com.resort.platform.backnode.meal.price}')}")
+    private Double price;
 
     @PostMapping
     public ResponseEntity<Void> addMealEntry(@RequestBody AddTrackingEntryRequest addTrackingEntryRequest) {
+        if(!qrPasscode.equals(addTrackingEntryRequest.getQrPasscode())) {
+            throw new InvalidRequestException("Invalid passcode, QR Code is not valid");
+        }
         trackingService.addMealEntry(addTrackingEntryRequest.getEmployeeNumber());
         return ResponseEntity.ok(null);
     }
 
     @GetMapping("/current/month")
-    public ResponseEntity<FoodTrackingResponse> getCurrentMonthTracking() {
-        FoodTrackingResponse foodTrackingResponse = trackingService.getCurrentMonthTracking();
-        return ResponseEntity.ok(foodTrackingResponse);
+    public ResponseEntity<List<MealReportModel>> getCurrentMonthTracking() {
+        List<MealReportModel> mealReport = trackingService.getCurrentMonthTracking();
+        return ResponseEntity.ok(mealReport);
     }
 
     @GetMapping("/{id}")
@@ -43,7 +55,6 @@ public class TrackingController {
 
     @GetMapping("/price")
     public ResponseEntity<MealPrice> setNewPrice() {
-
         return ResponseEntity.ok(this.trackingService.getMealPrice());
     }
 }
