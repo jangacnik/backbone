@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -17,9 +18,9 @@ public class ReservationController {
 
     private ReservationService reservationService;
 
-    @GetMapping
-    public ResponseEntity<List<MealReservation>> getReservations(@RequestBody ReservationRequest reservationRequest) {
-        return ResponseEntity.ok(reservationService.getReservationsByDate(reservationRequest.getLocalDate()));
+    @GetMapping("/{date}")
+    public ResponseEntity<List<MealReservation>> getReservations(@PathVariable LocalDate date) {
+        return ResponseEntity.ok(reservationService.getReservationsByDate(date));
     }
 
     @PostMapping

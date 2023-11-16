@@ -2,6 +2,7 @@ package com.resort.platform.backnode.foodtracker.service;
 
 import com.resort.platform.backnode.foodtracker.model.MonthlyMealReservations;
 import com.resort.platform.backnode.foodtracker.model.MealReservation;
+import com.resort.platform.backnode.foodtracker.model.rest.response.FoodTrackerUserWithDepartment;
 import com.resort.platform.backnode.foodtracker.repo.MealReservationRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,7 +17,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class ReservationService {
     private MealReservationRepository mealReservationRepository;
-
+    private FoodTrackerUserService foodTrackerUserService;
     public List<MealReservation> getReservationsByDate(LocalDate localDate) {
 
         String id = localDate.getYear() + "-" + localDate.getMonth()+"_reservation";
@@ -25,6 +26,11 @@ public class ReservationService {
         if(monthlyMealReservationsOptional.isPresent()) {
             MonthlyMealReservations monthlyMealReservations = monthlyMealReservationsOptional.get();
             List<MealReservation> mealReservations = monthlyMealReservations.getMealReservations().stream().filter(res -> res.getReservationDate().getMonth().equals(localDate.getMonth()) && localDate.getDayOfMonth() == res.getReservationDate().getDayOfMonth()).collect(Collectors.toList());
+            for(MealReservation mealReservation: mealReservations) {
+               FoodTrackerUserWithDepartment usr =  foodTrackerUserService.getFoodTrackerUser(mealReservation.getEmployeeNumber());
+                mealReservation.setDepartments(usr.getDepartments());
+                mealReservation.setName(usr.getFirstName() + " " + usr.getLastName());
+            }
             return  mealReservations;
         }
         return null;

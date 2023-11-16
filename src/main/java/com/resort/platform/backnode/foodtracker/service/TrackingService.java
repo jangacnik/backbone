@@ -64,6 +64,7 @@ public class TrackingService {
            mealReportModel.setDepartment(foodTrackerUserWithDepartment.getDepartments());
            mealReportModel.setName(foodTrackerUserWithDepartment.getFirstName() + " " + foodTrackerUserWithDepartment.getLastName());
            mealReportModel.setMealCountUsed(entry.getValue().getMealCount());
+           mealReportModel.setEmployeeNumber(foodTrackerUserWithDepartment.getEmployeeNumber());
            AtomicInteger reservedMealsCount = new AtomicInteger();
            List<MealReservation> reservedMeals = monthlyMealReservations.getMealReservations().stream().filter(mealReservation ->
                    mealReservation.getEmployeeNumber().equals(foodTrackerUserWithDepartment.getEmployeeNumber())).toList();

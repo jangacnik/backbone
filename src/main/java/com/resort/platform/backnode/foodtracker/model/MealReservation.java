@@ -15,6 +15,8 @@ public class MealReservation {
     @Id
     private String id;
     private String employeeNumber;
+    private String name;
+    private List<String> departments;
     private List<MealType> mealType;
     private LocalDate reservationDate;
 }
