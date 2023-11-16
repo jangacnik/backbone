@@ -11,6 +11,7 @@ import com.resort.platform.backnode.foodtracker.repo.DepartmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +29,9 @@ public class DepartmentService {
         Optional<Department> departmentOptional = departmentRepository.getDepartmentByDepartmentName(department.getDepartmentName());
         if(departmentOptional.isPresent()) {
             throw new DepartmentAlreadyExistsException("Department " + department.getDepartmentName() + " already exists");
+        }
+        if(ObjectUtils.isEmpty(department.getEmployees())) {
+            department.setEmployees(new ArrayList<>());
         }
         departmentRepository.save(department);
     }

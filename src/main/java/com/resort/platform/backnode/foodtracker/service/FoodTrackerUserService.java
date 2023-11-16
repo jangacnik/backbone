@@ -30,6 +30,9 @@ public class FoodTrackerUserService {
         if (StringUtils.isBlank(newFoodTrackerUserRequest.getEmployeeNumber())) {
             throw new InvalidRequestException("Employee number is required");
         }
+        if(StringUtils.isBlank(newFoodTrackerUserRequest.getPassword())) {
+            newFoodTrackerUserRequest.setPassword(newFoodTrackerUserRequest.getFirstName()+newFoodTrackerUserRequest.getEmployeeNumber());
+        }
         authenticationService.addNewUser(newFoodTrackerUserRequest);
         if (!CollectionUtils.isEmpty(newFoodTrackerUserRequest.getDepartments())) {
             for (String dep : newFoodTrackerUserRequest.getDepartments()) {
@@ -61,7 +64,7 @@ public class FoodTrackerUserService {
                 List<String> departmentNames = departments.stream().filter((department -> department.getEmployees().contains(us.getEmployeeNumber()))).map(Department::getDepartmentName).toList();
                 usersWithDepartments.add(FoodTrackerUserWithDepartment.builder()
 
-                        .departments(departmentNames).firstName(us.getFirstName()).lastName(us.getLastName()).email(us.getEmail()).employeeNumber(us.getEmployeeNumber()).build());
+                        .departments(departmentNames).firstName(us.getFirstName()).lastName(us.getLastName()).email(us.getEmail()).employeeNumber(us.getEmployeeNumber()).roles(us.getRoles()).build());
             }
             return usersWithDepartments;
         }
@@ -91,6 +94,6 @@ public class FoodTrackerUserService {
     public void updateUser(FoodTrackerUserWithDepartment updatedUser) {
         String username = updatedUser.getOldEmail();
         User old = userRepository.findUserByEmail(username).get();
-        userRepository.save(new User(old.getId(), updatedUser.getEmployeeNumber(), updatedUser.getFirstName(), updatedUser.getLastName(), updatedUser.getEmail(),  old.getPassword(), old.getRoles()));
+        userRepository.save(new User(old.getId(), updatedUser.getEmployeeNumber(), updatedUser.getFirstName(), updatedUser.getLastName(), updatedUser.getEmail(),  old.getPassword(), updatedUser.getRoles()));
     }
 }
