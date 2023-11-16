@@ -56,7 +56,11 @@ public class TrackingService {
         String trackingId = "tracking_" + calendar.get(Calendar.MONTH) + "_" + calendar.get(Calendar.YEAR);
         String reservationId = calendar.get(Calendar.YEAR) + "-" + month.toUpperCase()+"_reservation";
         MealTracking mealTracking = trackingRepository.findById(trackingId).orElseThrow(() -> new InvalidRequestException("Tracking does not exist yes"));
-        MonthlyMealReservations monthlyMealReservations = mealReservationRepository.getMonthlyMealReservationsById( reservationId).orElseThrow();
+        Optional<MonthlyMealReservations> monthlyMealReservationsOptional = mealReservationRepository.getMonthlyMealReservationsById( reservationId);
+        MonthlyMealReservations monthlyMealReservations = new MonthlyMealReservations();
+        if (monthlyMealReservationsOptional.isPresent()) {
+            monthlyMealReservations = monthlyMealReservationsOptional.get();
+        }
         List<MealReportModel> mealReport = new ArrayList<>();
         for (Map.Entry<String, MealEntry> entry : mealTracking.getTrackingEntries().entrySet()) {
            FoodTrackerUserWithDepartment foodTrackerUserWithDepartment = foodTrackerUserService.getFoodTrackerUser(entry.getKey());
