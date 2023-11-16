@@ -24,9 +24,9 @@ public class FoodTrackerUserController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping
-    public ResponseEntity<User> deleteFoodTrackerUser(@RequestBody FoodTrackerUserRequest fUser) {
-        return ResponseEntity.ok(foodTrackerUserService.deleteFoodTrackerUser(fUser.getUsername()));
+    @DeleteMapping("/{id}")
+    public ResponseEntity<User> deleteFoodTrackerUser(@PathVariable String id) {
+        return ResponseEntity.ok(foodTrackerUserService.deleteFoodTrackerUser(id));
 
     }
     @PutMapping

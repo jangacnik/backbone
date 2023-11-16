@@ -72,7 +72,7 @@ public class FoodTrackerUserService {
     }
 
     public User deleteFoodTrackerUser(String username) {
-        Optional<User> userOptional = userRepository.deleteUserByEmail(username);
+        Optional<User> userOptional = userRepository.deleteUserByEmployeeNumber(username);
         if (userOptional.isPresent()) {
             User deletedUser = userOptional.get();
             List<Department> optionalDepartmentList = departmentService.getDepartmentsWithUser(deletedUser.getEmployeeNumber());
