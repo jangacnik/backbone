@@ -59,7 +59,14 @@ public class ReservationService {
         Optional<MonthlyMealReservations> dailyMealReservationsOptional = mealReservationRepository.getMonthlyMealReservationsById(id);
         if (dailyMealReservationsOptional.isPresent()) {
             MonthlyMealReservations monthlyMealReservations = dailyMealReservationsOptional.get();
-            monthlyMealReservations.getMealReservations().add(mealReservation);
+            Optional<MealReservation> mealReservationOptional = monthlyMealReservations.getMealReservations().stream().filter(mealReservation2 -> mealReservation2.getId().equals(mealReservation.getId())).findFirst();
+            if(mealReservationOptional.isPresent()) {
+                MealReservation old = mealReservationOptional.get();
+                monthlyMealReservations.getMealReservations().remove(old);
+                monthlyMealReservations.getMealReservations().add(mealReservation);
+            } else {
+                monthlyMealReservations.getMealReservations().add(mealReservation);
+            }
             mealReservationRepository.save(monthlyMealReservations);
         } else {
             MonthlyMealReservations monthlyMealReservations = new MonthlyMealReservations(id, List.of(mealReservation));
