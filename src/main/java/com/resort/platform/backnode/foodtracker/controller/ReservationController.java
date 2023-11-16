@@ -22,6 +22,10 @@ public class ReservationController {
     public ResponseEntity<List<MealReservation>> getReservations(@PathVariable LocalDate date) {
         return ResponseEntity.ok(reservationService.getReservationsByDate(date));
     }
+    @GetMapping
+    public ResponseEntity<List<MealReservation>> getReservationsOfUserForCurrentMonth(@RequestHeader (name="Authorization") String token) {
+        return ResponseEntity.ok(reservationService.getReservationsOfUser(token));
+    }
 
     @PostMapping
     public ResponseEntity<Void> addReservation(@RequestBody MealReservation resevationRequest){

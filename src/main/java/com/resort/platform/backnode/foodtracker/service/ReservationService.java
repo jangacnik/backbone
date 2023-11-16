@@ -5,6 +5,7 @@ import com.resort.platform.backnode.foodtracker.model.MealReservation;
 import com.resort.platform.backnode.foodtracker.model.rest.response.FoodTrackerUserWithDepartment;
 import com.resort.platform.backnode.foodtracker.repo.MealReservationRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 public class ReservationService {
     private MealReservationRepository mealReservationRepository;
     private FoodTrackerUserService foodTrackerUserService;
+
     public List<MealReservation> getReservationsByDate(LocalDate localDate) {
 
         String id = localDate.getYear() + "-" + localDate.getMonth()+"_reservation";
@@ -32,6 +34,20 @@ public class ReservationService {
                 mealReservation.setDepartments(usr.getDepartments());
                 mealReservation.setName(usr.getFirstName() + " " + usr.getLastName());
             }
+            return  mealReservations;
+        }
+        return Collections.emptyList();
+    }
+
+    public List<MealReservation> getReservationsOfUser(String token) {
+        LocalDate date = LocalDate.now();
+        String id = date.getYear() + "-" + date.getMonth()+"_reservation";
+        FoodTrackerUserWithDepartment usr = foodTrackerUserService.getCurrentUser(token);
+        Optional<MonthlyMealReservations> monthlyMealReservationsOptional = mealReservationRepository.getMonthlyMealReservationsById(id);
+
+        if(monthlyMealReservationsOptional.isPresent()) {
+            MonthlyMealReservations monthlyMealReservations = monthlyMealReservationsOptional.get();
+            List<MealReservation> mealReservations = monthlyMealReservations.getMealReservations().stream().filter(res -> res.getReservationDate().getMonth().equals(date.getMonth()) && res.getEmployeeNumber().equals(usr.getEmployeeNumber())).collect(Collectors.toList());
             return  mealReservations;
         }
         return Collections.emptyList();
