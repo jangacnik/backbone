@@ -10,12 +10,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -23,17 +21,10 @@ import java.util.List;
 public class DepartmentController {
     @Autowired
     private DepartmentService departmentService;
-    @Value("#{'${com.resort.platform.backnode.deparments}'.split(',')}")
-    private List<String> departments;
 
     Logger logger = LoggerFactory.getLogger(DepartmentController.class);
 
-    @PostMapping("/test")
-    public ResponseEntity<List<String>> test() {
-//        departmentService.addNewDepartment(department);
-//        return new ResponseEntity<>(HttpStatus.OK);
-        return ResponseEntity.ok(departments);
-    }
+
     @PostMapping
     public ResponseEntity<Void> addNewDepartment(@RequestBody Department department) {
         departmentService.addNewDepartment(department);
@@ -43,7 +34,7 @@ public class DepartmentController {
 
     @PostMapping("/employee")
     public ResponseEntity<Void> addEmployeeToDepartment(@RequestBody AddEmployeeToDepartmentRequest bodyData) {
-        departmentService.addEmployeeToDepartment(bodyData.getEmployeeNumber(), bodyData.getDepartment());
+        departmentService.addEmployeeToDepartmentByDepartmentName(bodyData.getEmployeeNumber(), bodyData.getDepartment());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

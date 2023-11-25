@@ -47,10 +47,9 @@ public class SecurityConfiguration {
 
         http.cors(Customizer.withDefaults()).csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/api/v1/auth/**").permitAll()
-                        .requestMatchers("/api/v1/reserve").permitAll()
-                        .requestMatchers("/api/v1/department/**").hasRole("ADMIN")
-                        .requestMatchers("/api/v1/track/price").hasRole("ADMIN")
+                        .requestMatchers("/api/v1/auth/**", "/api/v1/reserve").permitAll()
+                        .requestMatchers("/api/v1/department/**","/api/v1/admin/**","/api/v1/track/price").hasRole("ADMIN")
+                        .requestMatchers("/api/v1/reserve/**","/api/v1/department/**","/api/v1/track/**").hasRole("USER")
                         .anyRequest().authenticated())
 
                 .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))

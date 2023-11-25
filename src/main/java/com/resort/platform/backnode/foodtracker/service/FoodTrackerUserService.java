@@ -26,7 +26,7 @@ public class FoodTrackerUserService {
     private DepartmentService departmentService;
     private JwtService jwtService;
 
-    public void addNewFoodTrackerUser(NewFoodTrackerUserRequest newFoodTrackerUserRequest) {
+    public void addNewFoodTrackerUser(NewFoodTrackerUserRequest newFoodTrackerUserRequest, boolean auto) {
         if (StringUtils.isBlank(newFoodTrackerUserRequest.getEmployeeNumber())) {
             throw new InvalidRequestException("Employee number is required");
         }
@@ -36,10 +36,16 @@ public class FoodTrackerUserService {
         authenticationService.addNewUser(newFoodTrackerUserRequest);
         if (!CollectionUtils.isEmpty(newFoodTrackerUserRequest.getDepartments())) {
             for (String dep : newFoodTrackerUserRequest.getDepartments()) {
-                departmentService.addEmployeeToDepartment(newFoodTrackerUserRequest.getEmployeeNumber(), dep);
+                if (auto) {
+                    departmentService.addEmployeeToDepartmentByDepartmentId(newFoodTrackerUserRequest.getEmployeeNumber(), dep);
+                } else {
+                    departmentService.addEmployeeToDepartmentByDepartmentName(newFoodTrackerUserRequest.getEmployeeNumber(), dep);
+                }
             }
         }
     }
+
+
 
     public FoodTrackerUserWithDepartment getFoodTrackerUser(String username) {
         Optional<User> userOptional = userRepository.findUserByEmployeeNumberOrEmail(username, username);

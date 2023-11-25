@@ -11,7 +11,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.ArrayList;
 
 @Data
-@Document("departments")
+@Document("departments_test")
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class Department {

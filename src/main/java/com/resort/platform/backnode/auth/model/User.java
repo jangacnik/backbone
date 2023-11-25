@@ -22,7 +22,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Document("user")
+@Document("user_test")
 @Builder
 
 @JsonIgnoreProperties(ignoreUnknown = true)

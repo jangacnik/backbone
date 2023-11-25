@@ -60,7 +60,7 @@ public class DepartmentService {
                 .build();
     }
 
-    public void addEmployeeToDepartment(String employeeNumber, String departmentName) {
+    public void addEmployeeToDepartmentByDepartmentName(String employeeNumber, String departmentName) {
         Optional<Department> departmentOptional = departmentRepository.getDepartmentByDepartmentName(departmentName);
         if (departmentOptional.isEmpty()) {
             ArrayList<String> emp = new ArrayList<String>();
@@ -77,7 +77,22 @@ public class DepartmentService {
             }
             departmentRepository.save(department);
         }
-
+    }
+    public void addEmployeeToDepartmentByDepartmentId(String employeeNumber, String id) {
+        Optional<Department> departmentOptional = departmentRepository.getDepartmentById(id);
+        if (departmentOptional.isEmpty()) {
+            throw new DepartmentNotFoundException("Department with id: "+id + "not found");
+        } else {
+            Department department = departmentOptional.get();
+            if(CollectionUtils.isEmpty(department.getEmployees())) {
+                department.setEmployees(new ArrayList<>(List.of(employeeNumber)));
+            } else {
+                if(!department.getEmployees().contains(employeeNumber)) {
+                    department.getEmployees().add(employeeNumber);
+                }
+            }
+            departmentRepository.save(department);
+        }
     }
 
     public List<Department> getAllDepartments() {

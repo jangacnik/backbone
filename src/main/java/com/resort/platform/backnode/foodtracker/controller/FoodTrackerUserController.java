@@ -20,7 +20,7 @@ public class FoodTrackerUserController {
 
     @PostMapping
     public ResponseEntity<Void> addNewFoodTrackerUser(@RequestBody NewFoodTrackerUserRequest newFoodTrackerUserRequest) {
-        foodTrackerUserService.addNewFoodTrackerUser(newFoodTrackerUserRequest);
+        foodTrackerUserService.addNewFoodTrackerUser(newFoodTrackerUserRequest, false);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
