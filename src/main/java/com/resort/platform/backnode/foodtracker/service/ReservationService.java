@@ -1,14 +1,19 @@
 package com.resort.platform.backnode.foodtracker.service;
 
+import com.resort.platform.backnode.foodtracker.exception.InvalidRequestException;
 import com.resort.platform.backnode.foodtracker.model.MonthlyMealReservations;
 import com.resort.platform.backnode.foodtracker.model.MealReservation;
 import com.resort.platform.backnode.foodtracker.model.rest.response.FoodTrackerUserWithDepartment;
 import com.resort.platform.backnode.foodtracker.repo.MealReservationRepository;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.cglib.core.Local;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
@@ -54,7 +59,10 @@ public class ReservationService {
     }
 
     public void addReservationForNextDay(MealReservation mealReservation) {
-        mealReservation.setId(mealReservation.getEmployeeNumber()+ "_" + mealReservation.getReservationDate().toString());
+        LocalDate localDate = LocalDate.now().plusDays(1);
+        mealReservation.setId(mealReservation.getEmployeeNumber()+ "_" + localDate.toString());
+        mealReservation.setReservationTime(LocalDateTime.now());
+        mealReservation.setReservationDate(localDate);
         String id = mealReservation.getReservationDate().getYear() + "-" + mealReservation.getReservationDate().getMonth()+"_reservation";
         Optional<MonthlyMealReservations> dailyMealReservationsOptional = mealReservationRepository.getMonthlyMealReservationsById(id);
         if (dailyMealReservationsOptional.isPresent()) {
@@ -75,12 +83,20 @@ public class ReservationService {
     }
 
     public void removeReservation(MealReservation mealReservation) {
-
         String id = mealReservation.getReservationDate().getYear() + "-" + mealReservation.getReservationDate().getMonth()+"_reservation";
         Optional<MonthlyMealReservations> dailyMealReservationsOptional = mealReservationRepository.getMonthlyMealReservationsById(id);
         if (dailyMealReservationsOptional.isPresent()) {
             MonthlyMealReservations monthlyMealReservations = dailyMealReservationsOptional.get();
-            monthlyMealReservations.getMealReservations().remove(mealReservation);
+            int oldSize = monthlyMealReservations.getMealReservations().size();
+            if (StringUtils.isNotBlank(mealReservation.getId()) ) {
+                monthlyMealReservations.getMealReservations().removeIf(r -> r.getId().equals(mealReservation.getId()));
+            } else {
+               String resId = mealReservation.getEmployeeNumber() + "_" + mealReservation.getReservationDate();
+                monthlyMealReservations.getMealReservations().removeIf(r -> r.getId().equals(resId));
+            }
+            if(monthlyMealReservations.getMealReservations().size() == oldSize) {
+                throw new InvalidRequestException("Reservation does not exit for employeeNumber " + mealReservation.getEmployeeNumber() + " for date: " + mealReservation.getReservationDate());
+            }
             mealReservationRepository.save(monthlyMealReservations);
         }
     }

@@ -8,6 +8,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -20,4 +21,5 @@ public class MealReservation {
     private List<String> departments;
     private List<MealType> mealType;
     private LocalDate reservationDate;
+    private LocalDateTime reservationTime;
 }
