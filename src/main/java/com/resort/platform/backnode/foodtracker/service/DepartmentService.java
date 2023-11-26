@@ -27,10 +27,10 @@ public class DepartmentService {
 
     public void addNewDepartment(Department department) throws DepartmentAlreadyExistsException {
         Optional<Department> departmentOptional = departmentRepository.getDepartmentByDepartmentName(department.getDepartmentName());
-        if(departmentOptional.isPresent()) {
+        if (departmentOptional.isPresent()) {
             throw new DepartmentAlreadyExistsException("Department " + department.getDepartmentName() + " already exists");
         }
-        if(ObjectUtils.isEmpty(department.getEmployees())) {
+        if (ObjectUtils.isEmpty(department.getEmployees())) {
             department.setEmployees(new ArrayList<>());
         }
         departmentRepository.save(department);
@@ -68,26 +68,27 @@ public class DepartmentService {
             addNewDepartment(new Department(departmentName, emp));
         } else {
             Department department = departmentOptional.get();
-            if(CollectionUtils.isEmpty(department.getEmployees())) {
+            if (CollectionUtils.isEmpty(department.getEmployees())) {
                 department.setEmployees(new ArrayList<>(List.of(employeeNumber)));
             } else {
-                if(!department.getEmployees().contains(employeeNumber)) {
+                if (!department.getEmployees().contains(employeeNumber)) {
                     department.getEmployees().add(employeeNumber);
                 }
             }
             departmentRepository.save(department);
         }
     }
+
     public void addEmployeeToDepartmentByDepartmentId(String employeeNumber, String id) {
         Optional<Department> departmentOptional = departmentRepository.getDepartmentById(id);
         if (departmentOptional.isEmpty()) {
-            throw new DepartmentNotFoundException("Department with id: "+id + "not found");
+            throw new DepartmentNotFoundException("Department with id: " + id + "not found");
         } else {
             Department department = departmentOptional.get();
-            if(CollectionUtils.isEmpty(department.getEmployees())) {
+            if (CollectionUtils.isEmpty(department.getEmployees())) {
                 department.setEmployees(new ArrayList<>(List.of(employeeNumber)));
             } else {
-                if(!department.getEmployees().contains(employeeNumber)) {
+                if (!department.getEmployees().contains(employeeNumber)) {
                     department.getEmployees().add(employeeNumber);
                 }
             }
@@ -98,8 +99,9 @@ public class DepartmentService {
     public List<Department> getAllDepartments() {
         return departmentRepository.findAll();
     }
+
     public List<String> getAllDepartmentsNames() {
-        List<Department> deps =  departmentRepository.findAll();
+        List<Department> deps = departmentRepository.findAll();
         return deps.stream().map(Department::getDepartmentName).collect(Collectors.toList());
     }
 

@@ -5,6 +5,7 @@ import com.resort.platform.backnode.foodtracker.model.rest.response.FoodTrackerU
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

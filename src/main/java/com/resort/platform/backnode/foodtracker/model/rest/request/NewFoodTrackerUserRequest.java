@@ -1,7 +1,10 @@
 package com.resort.platform.backnode.foodtracker.model.rest.request;
 
 import com.resort.platform.backnode.auth.model.rest.request.NewUserRequest;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
 

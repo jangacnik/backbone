@@ -11,21 +11,19 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.ArrayList;
 
 @Data
-@Document("departments_test")
+@Document("departments")
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class Department {
     @Id
     private String id;
-
-    public Department(String departmentName, ArrayList<String> employees) {
-        this.departmentName = departmentName;
-        this.employees = employees;
-    }
-
     @NotNull
     @Indexed(unique = true)
     private String departmentName;
     @NotNull
     private ArrayList<String> employees;
+    public Department(String departmentName, ArrayList<String> employees) {
+        this.departmentName = departmentName;
+        this.employees = employees;
+    }
 }

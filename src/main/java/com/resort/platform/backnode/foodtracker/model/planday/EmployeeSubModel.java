@@ -4,14 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 @Data
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class EmployeeSubModel {
-//    ArrayList<String> securityGroups;
+    //    ArrayList<String> securityGroups;
     int id; //employeenumber
     String lastName;
     String firstName;

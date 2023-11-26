@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -22,7 +21,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Document("user_test")
+@Document("user")
 @Builder
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -38,11 +37,12 @@ public class User implements UserDetails {
     private String email;
     private String password;
     private List<Role> roles;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        List <GrantedAuthority> authorities = new ArrayList<>();
+        List<GrantedAuthority> authorities = new ArrayList<>();
         for (Role role : roles) {
-            authorities.add(new SimpleGrantedAuthority("ROLE_"+role.name()));
+            authorities.add(new SimpleGrantedAuthority("ROLE_" + role.name()));
         }
         return authorities;
     }

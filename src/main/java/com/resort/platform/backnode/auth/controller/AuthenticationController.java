@@ -1,15 +1,12 @@
 package com.resort.platform.backnode.auth.controller;
 
-import com.resort.platform.backnode.auth.model.rest.request.SignIn;
 import com.resort.platform.backnode.auth.model.rest.request.NewUserRequest;
+import com.resort.platform.backnode.auth.model.rest.request.SignIn;
 import com.resort.platform.backnode.auth.model.rest.response.JwtResponse;
 import com.resort.platform.backnode.auth.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,8 +16,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
 public class AuthenticationController {
-    Logger logger = LoggerFactory.getLogger(AuthenticationController.class);
     private final AuthenticationService authenticationService;
+    Logger logger = LoggerFactory.getLogger(AuthenticationController.class);
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/new")
@@ -28,6 +25,7 @@ public class AuthenticationController {
         authenticationService.addNewUser(request);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
     @PostMapping("/signin")
     public ResponseEntity<JwtResponse> signin(@RequestBody SignIn request) {
         return ResponseEntity.ok(authenticationService.signin(request));

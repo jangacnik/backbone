@@ -9,7 +9,6 @@ import com.resort.platform.backnode.foodtracker.service.DepartmentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,11 +18,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/department")
 public class DepartmentController {
+    Logger logger = LoggerFactory.getLogger(DepartmentController.class);
     @Autowired
     private DepartmentService departmentService;
-
-    Logger logger = LoggerFactory.getLogger(DepartmentController.class);
-
 
     @PostMapping
     public ResponseEntity<Void> addNewDepartment(@RequestBody Department department) {

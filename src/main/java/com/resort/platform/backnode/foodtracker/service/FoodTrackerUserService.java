@@ -30,8 +30,8 @@ public class FoodTrackerUserService {
         if (StringUtils.isBlank(newFoodTrackerUserRequest.getEmployeeNumber())) {
             throw new InvalidRequestException("Employee number is required");
         }
-        if(StringUtils.isBlank(newFoodTrackerUserRequest.getPassword())) {
-            newFoodTrackerUserRequest.setPassword(newFoodTrackerUserRequest.getFirstName()+newFoodTrackerUserRequest.getEmployeeNumber());
+        if (StringUtils.isBlank(newFoodTrackerUserRequest.getPassword())) {
+            newFoodTrackerUserRequest.setPassword(newFoodTrackerUserRequest.getFirstName() + newFoodTrackerUserRequest.getEmployeeNumber());
         }
         authenticationService.addNewUser(newFoodTrackerUserRequest);
         if (!CollectionUtils.isEmpty(newFoodTrackerUserRequest.getDepartments())) {
@@ -44,7 +44,6 @@ public class FoodTrackerUserService {
             }
         }
     }
-
 
 
     public FoodTrackerUserWithDepartment getFoodTrackerUser(String username) {
@@ -100,6 +99,15 @@ public class FoodTrackerUserService {
     public void updateUser(FoodTrackerUserWithDepartment updatedUser) {
         String username = updatedUser.getOldEmail();
         User old = userRepository.findUserByEmail(username).get();
-        userRepository.save(new User(old.getId(), updatedUser.getEmployeeNumber(), updatedUser.getFirstName(), updatedUser.getLastName(), updatedUser.getEmail(),  old.getPassword(), updatedUser.getRoles()));
+        userRepository.save(new User(old.getId(), updatedUser.getEmployeeNumber(), updatedUser.getFirstName(), updatedUser.getLastName(), updatedUser.getEmail(), old.getPassword(), updatedUser.getRoles()));
+        List<Department> departments = departmentService.getDepartmentsWithUser(updatedUser.getEmployeeNumber());
+        for (Department dep : departments) {
+            if (dep.getEmployees().contains(updatedUser.getEmployeeNumber()) && !updatedUser.getDepartments().contains(dep.getDepartmentName())) {
+                departmentService.removeUserFromDepartment(updatedUser.getEmployeeNumber(), dep.getDepartmentName());
+            }
+        }
+        for (String dep : updatedUser.getDepartments()) {
+            departmentService.addEmployeeToDepartmentByDepartmentName(updatedUser.getEmployeeNumber(), dep);
+        }
     }
 }

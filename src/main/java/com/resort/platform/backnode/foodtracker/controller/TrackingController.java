@@ -4,7 +4,6 @@ import com.resort.platform.backnode.foodtracker.exception.InvalidRequestExceptio
 import com.resort.platform.backnode.foodtracker.model.MealPrice;
 import com.resort.platform.backnode.foodtracker.model.rest.MealEntryWithUser;
 import com.resort.platform.backnode.foodtracker.model.rest.request.AddTrackingEntryRequest;
-import com.resort.platform.backnode.foodtracker.model.rest.response.FoodTrackingResponse;
 import com.resort.platform.backnode.foodtracker.model.rest.response.MealReportModel;
 import com.resort.platform.backnode.foodtracker.service.TrackingService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +28,7 @@ public class TrackingController {
 
     @PostMapping
     public ResponseEntity<Void> addMealEntry(@RequestBody AddTrackingEntryRequest addTrackingEntryRequest) {
-        if(!qrPasscode.equals(addTrackingEntryRequest.getQrPasscode())) {
+        if (!qrPasscode.equals(addTrackingEntryRequest.getQrPasscode())) {
             throw new InvalidRequestException("Invalid passcode, QR Code is not valid");
         }
         trackingService.addMealEntry(addTrackingEntryRequest.getEmployeeNumber());

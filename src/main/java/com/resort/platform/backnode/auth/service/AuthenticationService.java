@@ -3,8 +3,8 @@ package com.resort.platform.backnode.auth.service;
 import com.resort.platform.backnode.auth.exceptions.UserAlreadyExistsExceptions;
 import com.resort.platform.backnode.auth.model.User;
 import com.resort.platform.backnode.auth.model.enums.Role;
-import com.resort.platform.backnode.auth.model.rest.request.SignIn;
 import com.resort.platform.backnode.auth.model.rest.request.NewUserRequest;
+import com.resort.platform.backnode.auth.model.rest.request.SignIn;
 import com.resort.platform.backnode.auth.model.rest.response.JwtResponse;
 import com.resort.platform.backnode.auth.repo.UserRepository;
 import com.resort.platform.backnode.auth.service.interfaces.AuthenticationServiceInterface;
@@ -27,10 +27,11 @@ public class AuthenticationService implements AuthenticationServiceInterface {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final UserService userService;
+
     @Override
     public void addNewUser(NewUserRequest request) {
         Optional<User> userOptional = userRepository.findUserByEmail(request.getEmail());
-        if(userOptional.isPresent()) {
+        if (userOptional.isPresent()) {
             throw new UserAlreadyExistsExceptions("User with E-mail: " + request.getEmail() + " already exists");
         }
         var user = User.builder()
@@ -71,6 +72,6 @@ public class AuthenticationService implements AuthenticationServiceInterface {
         if (jwtService.isTokenValid(refreshToken, userDetails)) {
             return jwtService.generateToken(userDetails);
         }
-        throw  new UsernameNotFoundException("Not found");
+        throw new UsernameNotFoundException("Not found");
     }
 }

@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 public class JwtService implements JwtServiceInterface {
     @Value("${token.signing.key}")
     private String jwtSigningKey;
+
     @Override
     public String extractUserName(String token) {
         return extractClaim(token, Claims::getSubject);

@@ -29,8 +29,9 @@ public class FoodTrackerUserController {
         return ResponseEntity.ok(foodTrackerUserService.deleteFoodTrackerUser(id));
 
     }
+
     @PutMapping
-    public ResponseEntity<FoodTrackerUserWithDepartment> updateFoodTrackerUser(@RequestBody FoodTrackerUserWithDepartment foodTrackerUserWithDepartment){
+    public ResponseEntity<FoodTrackerUserWithDepartment> updateFoodTrackerUser(@RequestBody FoodTrackerUserWithDepartment foodTrackerUserWithDepartment) {
         foodTrackerUserService.updateUser(foodTrackerUserWithDepartment);
         return ResponseEntity.ok(null);
     }
@@ -46,7 +47,7 @@ public class FoodTrackerUserController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<FoodTrackerUserWithDepartment> getCurretnFoodTrackerUser(@RequestHeader (name="Authorization") String token) {
+    public ResponseEntity<FoodTrackerUserWithDepartment> getCurretnFoodTrackerUser(@RequestHeader(name = "Authorization") String token) {
         return ResponseEntity.ok(foodTrackerUserService.getCurrentUser(token));
     }
 }

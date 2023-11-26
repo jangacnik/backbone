@@ -1,8 +1,6 @@
 package com.resort.platform.backnode.foodtracker.controller;
 
-import com.resort.platform.backnode.foodtracker.model.MonthlyMealReservations;
 import com.resort.platform.backnode.foodtracker.model.MealReservation;
-import com.resort.platform.backnode.foodtracker.model.rest.request.ReservationRequest;
 import com.resort.platform.backnode.foodtracker.service.ReservationService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,16 +20,18 @@ public class ReservationController {
     public ResponseEntity<List<MealReservation>> getReservations(@PathVariable LocalDate date) {
         return ResponseEntity.ok(reservationService.getReservationsByDate(date));
     }
+
     @GetMapping
-    public ResponseEntity<List<MealReservation>> getReservationsOfUserForCurrentMonth(@RequestHeader (name="Authorization") String token) {
+    public ResponseEntity<List<MealReservation>> getReservationsOfUserForCurrentMonth(@RequestHeader(name = "Authorization") String token) {
         return ResponseEntity.ok(reservationService.getReservationsOfUser(token));
     }
 
     @PostMapping
-    public ResponseEntity<Void> addReservation(@RequestBody MealReservation resevationRequest){
+    public ResponseEntity<Void> addReservation(@RequestBody MealReservation resevationRequest) {
         reservationService.addReservationForNextDay(resevationRequest);
         return ResponseEntity.ok(null);
     }
+
     @DeleteMapping
     public ResponseEntity<Void> deleteReservation(@RequestBody MealReservation reservationRequest) {
         reservationService.removeReservation(reservationRequest);

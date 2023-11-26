@@ -1,7 +1,10 @@
 package com.resort.platform.backnode.foodtracker.model.rest.response;
 
 import com.resort.platform.backnode.foodtracker.model.Department;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;

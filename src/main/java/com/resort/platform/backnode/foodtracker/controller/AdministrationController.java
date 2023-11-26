@@ -1,7 +1,6 @@
 package com.resort.platform.backnode.foodtracker.controller;
 
 import com.resort.platform.backnode.auth.model.enums.Role;
-import com.resort.platform.backnode.auth.service.UserService;
 import com.resort.platform.backnode.foodtracker.exception.DepartmentAlreadyExistsException;
 import com.resort.platform.backnode.foodtracker.model.Department;
 import com.resort.platform.backnode.foodtracker.model.planday.DepartmentResponseModel;
@@ -47,13 +46,14 @@ public class AdministrationController {
 
     @Autowired
     private FoodTrackerUserService foodTrackerUserService;
+
     @PostMapping("/update")
     public ResponseEntity<Void> updateEmployeesAndDepartmentsFromPlandayRest() throws IOException, URISyntaxException {
         String accessToken = administrationService.getToken(tokenUrl, token, clientId);
         DepartmentResponseModel res = administrationService.getDepartments(departmentUrl, accessToken, clientId);
-        for (DepartmentSubModel dep: res.getData()) {
+        for (DepartmentSubModel dep : res.getData()) {
             try {
-                departmentService.addNewDepartment(new Department(String.valueOf(dep.getId()), dep.getName(),new ArrayList<>()));
+                departmentService.addNewDepartment(new Department(String.valueOf(dep.getId()), dep.getName(), new ArrayList<>()));
             } catch (DepartmentAlreadyExistsException e) {
 
             }
@@ -67,7 +67,7 @@ public class AdministrationController {
         roles.add(Role.USER);
         while (userResponseModel.getPaging().getOffset() < total) {
             userResponseModel = administrationService.getEmployees(employeesUrl, accessToken, clientId, offset);
-            for(EmployeeSubModel emp: userResponseModel.getData()) {
+            for (EmployeeSubModel emp : userResponseModel.getData()) {
                 try {
                     NewFoodTrackerUserRequest usr = new NewFoodTrackerUserRequest();
                     usr.setEmail(emp.getEmail());
@@ -75,7 +75,7 @@ public class AdministrationController {
                     usr.setLastName(emp.getLastName());
                     usr.setDepartments(emp.getDepartments());
                     usr.setEmployeeNumber(String.valueOf(emp.getId()));
-                    usr.setPassword(usr.getLastName()+usr.getEmployeeNumber());
+                    usr.setPassword(usr.getLastName() + usr.getEmployeeNumber());
                     usr.setRoles(roles);
                     foodTrackerUserService.addNewFoodTrackerUser(usr, true);
                 } catch (Exception e) {
