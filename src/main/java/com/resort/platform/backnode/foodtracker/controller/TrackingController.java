@@ -23,9 +23,6 @@ public class TrackingController {
     @Value("${com.resort.platform.backnode.meal.passcode}")
     private String qrPasscode;
 
-    @Value("#{new Double('${com.resort.platform.backnode.meal.price}')}")
-    private Double price;
-
     @PostMapping
     public ResponseEntity<Void> addMealEntry(@RequestBody AddTrackingEntryRequest addTrackingEntryRequest) {
         if (!qrPasscode.equals(addTrackingEntryRequest.getQrPasscode())) {
