@@ -1,6 +1,7 @@
 package com.resort.platform.backnode.auth.controller;
 
 import com.resort.platform.backnode.auth.model.rest.request.NewUserRequest;
+import com.resort.platform.backnode.auth.model.rest.request.PasswordChangeRequest;
 import com.resort.platform.backnode.auth.model.rest.request.SignIn;
 import com.resort.platform.backnode.auth.model.rest.response.JwtResponse;
 import com.resort.platform.backnode.auth.service.AuthenticationService;
@@ -39,5 +40,11 @@ public class AuthenticationController {
     @PostMapping("/refresh")
     public ResponseEntity<JwtResponse> refresh(@RequestHeader(value = "refreshToken") String request) {
         return ResponseEntity.ok(authenticationService.refresh(request));
+    }
+
+    @PreAuthorize("hasRole('USER')")
+    @PostMapping("/password")
+    public ResponseEntity<Boolean> changePassword(@RequestHeader(value = "Authorization") String request, @RequestBody PasswordChangeRequest passwordChangeRequest) {
+        return ResponseEntity.ok(authenticationService.changePassword(request, passwordChangeRequest));
     }
 }

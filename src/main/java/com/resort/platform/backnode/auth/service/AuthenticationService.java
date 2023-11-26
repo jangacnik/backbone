@@ -4,6 +4,7 @@ import com.resort.platform.backnode.auth.exceptions.UserAlreadyExistsExceptions;
 import com.resort.platform.backnode.auth.model.User;
 import com.resort.platform.backnode.auth.model.enums.Role;
 import com.resort.platform.backnode.auth.model.rest.request.NewUserRequest;
+import com.resort.platform.backnode.auth.model.rest.request.PasswordChangeRequest;
 import com.resort.platform.backnode.auth.model.rest.request.SignIn;
 import com.resort.platform.backnode.auth.model.rest.response.JwtResponse;
 import com.resort.platform.backnode.auth.repo.UserRepository;
@@ -50,6 +51,20 @@ public class AuthenticationService implements AuthenticationServiceInterface {
         var user = userRepository.findUserByEmail(request.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid email or password"));
         return jwtService.generateToken(user);
+    }
+
+    public boolean changePassword(String token, PasswordChangeRequest passwordChangeRequest) {
+
+        String t = token.substring(7);
+        String un = this.jwtService.extractUserName(t);
+        var user = userRepository.findUserByEmail(un)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid email or password"));
+        if(passwordEncoder.matches(passwordChangeRequest.getOldPassword(), user.getPassword())) {
+            user.setPassword(passwordEncoder.encode(passwordChangeRequest.getNewPassword()));
+            userRepository.save(user);
+            return true;
+        }
+        return false;
     }
 
     public JwtResponse signinAdmin(SignIn request) {

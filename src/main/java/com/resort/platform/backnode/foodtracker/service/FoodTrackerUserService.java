@@ -55,7 +55,7 @@ public class FoodTrackerUserService {
             for (Department dep : departments) {
                 departmentNames.add(dep.getDepartmentName());
             }
-            return FoodTrackerUserWithDepartment.builder().departments(departmentNames).firstName(user.getFirstName()).lastName(user.getLastName()).email(user.getEmail()).employeeNumber(user.getEmployeeNumber()).build();
+            return FoodTrackerUserWithDepartment.builder().departments(departmentNames).firstName(user.getFirstName()).lastName(user.getLastName()).email(user.getEmail()).employeeNumber(user.getEmployeeNumber()).roles(user.getRoles()).build();
         }
         throw new UsernameNotFoundException("User not found");
     }
