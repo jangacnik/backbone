@@ -63,7 +63,7 @@ public class DepartmentService {
         Optional<User> userOptional = userRepository.findUserByEmployeeNumber(employeeId);
         if (userOptional.isPresent()) {
           User tempUser = userOptional.get();
-          foodTrackerUsers.add(new FoodTrackerUser(tempUser.getLastName(), tempUser.getFirstName(),
+          foodTrackerUsers.add(new FoodTrackerUser(tempUser.getId(),tempUser.getLastName(), tempUser.getFirstName(),
               tempUser.getEmail(), tempUser.getEmployeeNumber()));
         }
       }

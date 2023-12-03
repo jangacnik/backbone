@@ -76,7 +76,7 @@ public class FoodTrackerUserService {
       }
       return FoodTrackerUserWithDepartment.builder().departments(departmentNames)
           .firstName(user.getFirstName()).lastName(user.getLastName()).email(user.getEmail())
-          .employeeNumber(user.getEmployeeNumber()).roles(user.getRoles()).build();
+          .employeeNumber(user.getEmployeeNumber()).roles(user.getRoles()).id(user.getId()).build();
     }
     throw new UsernameNotFoundException("User not found");
   }
@@ -96,7 +96,7 @@ public class FoodTrackerUserService {
             .filter((department -> department.getEmployees().contains(us.getEmployeeNumber())))
             .map(Department::getDepartmentName).toList();
         usersWithDepartments.add(FoodTrackerUserWithDepartment.builder()
-
+                .id(us.getId())
             .departments(departmentNames).firstName(us.getFirstName()).lastName(us.getLastName())
             .email(us.getEmail()).employeeNumber(us.getEmployeeNumber()).roles(us.getRoles())
             .build());
@@ -145,8 +145,8 @@ public class FoodTrackerUserService {
    * @param updatedUser - updated user data with all needed information for update
    */
   public void updateUser(FoodTrackerUserWithDepartment updatedUser) {
-    String username = updatedUser.getOldEmail();
-    User old = userRepository.findUserByEmail(username).get();
+    String id = updatedUser.getId();
+    User old = userRepository.findById(id).get();
     userRepository.save(
         new User(old.getId(), updatedUser.getEmployeeNumber(), updatedUser.getFirstName(),
             updatedUser.getLastName(), updatedUser.getEmail(), old.getPassword(),
