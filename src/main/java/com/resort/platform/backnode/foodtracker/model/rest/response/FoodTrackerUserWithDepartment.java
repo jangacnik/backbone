@@ -13,9 +13,9 @@ public class FoodTrackerUserWithDepartment extends FoodTrackerUser {
   String oldEmail;
 
   @Builder
-  public FoodTrackerUserWithDepartment(String lastName, String firstName, String email,
+  public FoodTrackerUserWithDepartment(String id,String lastName, String firstName, String email,
       String employeeNumber, List<String> departments, List<Role> roles) {
-    super(lastName, firstName, email, employeeNumber);
+    super(id,lastName, firstName, email, employeeNumber);
     this.departments = departments;
     this.roles = roles;
   }
