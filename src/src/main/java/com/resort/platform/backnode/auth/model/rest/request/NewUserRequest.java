@@ -13,10 +13,11 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class NewUserRequest {
-    private String firstName;
-    private String lastName;
-    private String employeeNumber;
-    private String email;
-    private String password;
-    private List<Role> roles;
+
+  private String firstName;
+  private String lastName;
+  private String employeeNumber;
+  private String email;
+  private String password;
+  private List<Role> roles;
 }

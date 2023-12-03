@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MealEntryWithUser {
-    FoodTrackerUserWithDepartment user;
-    MealEntry mealEntry;
+
+  FoodTrackerUserWithDepartment user;
+  MealEntry mealEntry;
 }

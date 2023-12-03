@@ -18,72 +18,80 @@ import java.util.Optional;
 
 @Service
 public class DepartmentService {
-    @Autowired
-    private DepartmentRepository departmentRepository;
-    @Autowired
-    private UserRepository userRepository;
 
-    public void addNewDepartment(Department department) throws DepartmentAlreadyExistsException {
-        Optional<Department> departmentOptional = departmentRepository.getDepartmentByDepartmentName(department.getDepartmentName());
-        if(departmentOptional.isPresent()) {
-            throw new DepartmentAlreadyExistsException("Department " + department.getDepartmentName() + " already exists");
-        }
-        departmentRepository.save(department);
+  @Autowired
+  private DepartmentRepository departmentRepository;
+  @Autowired
+  private UserRepository userRepository;
+
+  public void addNewDepartment(Department department) throws DepartmentAlreadyExistsException {
+    Optional<Department> departmentOptional = departmentRepository.getDepartmentByDepartmentName(
+        department.getDepartmentName());
+    if (departmentOptional.isPresent()) {
+      throw new DepartmentAlreadyExistsException(
+          "Department " + department.getDepartmentName() + " already exists");
     }
+    departmentRepository.save(department);
+  }
 
-    public DepartmentWithUsersResponse getDepartmentByName(String departmentName) throws DepartmentNotFoundException {
-        Department department = departmentRepository.getDepartmentByDepartmentName(departmentName).orElseThrow(
-                () -> new DepartmentNotFoundException("Department: " + departmentName + " not found")
+  public DepartmentWithUsersResponse getDepartmentByName(String departmentName)
+      throws DepartmentNotFoundException {
+    Department department = departmentRepository.getDepartmentByDepartmentName(departmentName)
+        .orElseThrow(
+            () -> new DepartmentNotFoundException("Department: " + departmentName + " not found")
         );
-        List<FoodTrackerUser> foodTrackerUsers = new ArrayList<>();
-        if (!CollectionUtils.isEmpty(department.getEmployees())) {
-            for (String employeeId : department.getEmployees()) {
-                Optional<User> userOptional = userRepository.findUserByEmployeeNumber(employeeId);
-                if (userOptional.isPresent()) {
-                    User tempUser = userOptional.get();
-                    foodTrackerUsers.add(new FoodTrackerUser(tempUser.getLastName(), tempUser.getFirstName(), tempUser.getEmail(), tempUser.getEmployeeNumber()));
-                }
-            }
-
+    List<FoodTrackerUser> foodTrackerUsers = new ArrayList<>();
+    if (!CollectionUtils.isEmpty(department.getEmployees())) {
+      for (String employeeId : department.getEmployees()) {
+        Optional<User> userOptional = userRepository.findUserByEmployeeNumber(employeeId);
+        if (userOptional.isPresent()) {
+          User tempUser = userOptional.get();
+          foodTrackerUsers.add(new FoodTrackerUser(tempUser.getLastName(), tempUser.getFirstName(),
+              tempUser.getEmail(), tempUser.getEmployeeNumber()));
         }
-        return DepartmentWithUsersResponse
-                .builder()
-                .id(department.getId())
-                .departmentName(department.getDepartmentName())
-                .employees(department.getEmployees())
-                .users(foodTrackerUsers)
-                .build();
-    }
+      }
 
-    public void addEmployeeToDepartment(String employeeNumber, String departmentName) {
-        Optional<Department> departmentOptional = departmentRepository.getDepartmentByDepartmentName(departmentName);
-        if (departmentOptional.isPresent()) {
-            Department department = departmentOptional.get();
-            if(CollectionUtils.isEmpty(department.getEmployees())) {
-                department.setEmployees(new ArrayList<>(List.of(employeeNumber)));
-            } else {
-                if(!department.getEmployees().contains(employeeNumber)) {
-                    department.getEmployees().add(employeeNumber);
-                }
-            }
-            departmentRepository.save(department);
-        } else {
-            ArrayList<String> arrayList = new ArrayList<>();
-            arrayList.add(employeeNumber);
-            Department department = new Department();
-            department.setDepartmentName(departmentName);
-            department.setEmployees(arrayList);
-            departmentRepository.save(department);
-            throw new DepartmentNotFoundException("Department: " + departmentName + " not found");
+    }
+    return DepartmentWithUsersResponse
+        .builder()
+        .id(department.getId())
+        .departmentName(department.getDepartmentName())
+        .employees(department.getEmployees())
+        .users(foodTrackerUsers)
+        .build();
+  }
+
+  public void addEmployeeToDepartment(String employeeNumber, String departmentName) {
+    Optional<Department> departmentOptional = departmentRepository.getDepartmentByDepartmentName(
+        departmentName);
+    if (departmentOptional.isPresent()) {
+      Department department = departmentOptional.get();
+      if (CollectionUtils.isEmpty(department.getEmployees())) {
+        department.setEmployees(new ArrayList<>(List.of(employeeNumber)));
+      } else {
+        if (!department.getEmployees().contains(employeeNumber)) {
+          department.getEmployees().add(employeeNumber);
         }
+      }
+      departmentRepository.save(department);
+    } else {
+      ArrayList<String> arrayList = new ArrayList<>();
+      arrayList.add(employeeNumber);
+      Department department = new Department();
+      department.setDepartmentName(departmentName);
+      department.setEmployees(arrayList);
+      departmentRepository.save(department);
+      throw new DepartmentNotFoundException("Department: " + departmentName + " not found");
     }
+  }
 
 
-    public List<Department> getDepartmentsWithUser(String employeeId) {
-        return departmentRepository.findAllByEmployeesContaining(employeeId).orElseThrow(() -> new DepartmentNotFoundException("Departments with user not found"));
-    }
+  public List<Department> getDepartmentsWithUser(String employeeId) {
+    return departmentRepository.findAllByEmployeesContaining(employeeId)
+        .orElseThrow(() -> new DepartmentNotFoundException("Departments with user not found"));
+  }
 
-    public Department saveOrUpdateDepartment(Department department) {
-        return departmentRepository.save(department);
-    }
+  public Department saveOrUpdateDepartment(Department department) {
+    return departmentRepository.save(department);
+  }
 }

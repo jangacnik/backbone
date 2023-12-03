@@ -8,4 +8,5 @@ import org.springframework.context.annotation.Configuration;
 @EnableEncryptableProperties
 @EncryptablePropertySource("application.properties")
 public class AppConfigJasypt {
+
 }

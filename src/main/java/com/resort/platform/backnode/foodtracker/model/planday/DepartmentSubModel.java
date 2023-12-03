@@ -8,7 +8,8 @@ import lombok.RequiredArgsConstructor;
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class DepartmentSubModel {
-    int id;
-    String name;
-    String number;
+
+  int id;
+  String name;
+  String number;
 }

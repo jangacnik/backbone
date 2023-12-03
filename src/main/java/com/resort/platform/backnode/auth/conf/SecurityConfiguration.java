@@ -1,5 +1,7 @@
 package com.resort.platform.backnode.auth.conf;
 
+import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
+
 import com.resort.platform.backnode.auth.filter.JwtFilter;
 import com.resort.platform.backnode.auth.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -23,64 +25,66 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
-
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 @RequiredArgsConstructor
 @PropertySource("classpath:application.properties")
 public class SecurityConfiguration {
-    private final JwtFilter jwtAuthenticationFilter;
-    private final UserService userService;
 
-    @Autowired
-    private CorsConfiguration corsConfigurationSource;
+  private final JwtFilter jwtAuthenticationFilter;
+  private final UserService userService;
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+  @Autowired
+  private CorsConfiguration corsConfigurationSource;
 
-        http.cors(Customizer.withDefaults()).csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(request -> request
-                        .requestMatchers("/api/v1/auth/**", "/api/v1/reserve").permitAll()
-                        .requestMatchers("/api/v1/reserve/**", "/api/v1/department/**", "/api/v1/admin/**", "/api/v1/track/price").hasRole("ADMIN")
-                        .requestMatchers("/api/v1/reserve/**", "/api/v1/department/**", "/api/v1/track/**").hasRole("USER")
-                        .anyRequest().authenticated())
+  @Bean
+  public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-                .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
-                .authenticationProvider(authenticationProvider()).addFilterBefore(
-                        jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+    http.cors(Customizer.withDefaults()).csrf(AbstractHttpConfigurer::disable)
+        .authorizeHttpRequests(request -> request
+            .requestMatchers("/api/v1/auth/**").permitAll()
+            .requestMatchers("/api/v1/reserve/**", "/api/v1/department/**", "/api/v1/admin/**",
+                "/api/v1/track/price").hasRole("ADMIN")
+            .requestMatchers("/api/v1/reserve/**", "/api/v1/department/**", "/api/v1/track/**",
+                "/api/v1/reserve").hasRole("USER")
+            .anyRequest().authenticated())
 
-        return http.build();
-    }
+        .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
+        .authenticationProvider(authenticationProvider()).addFilterBefore(
+            jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+    return http.build();
+  }
 
-    @Bean
-    public AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(userService.userDetailsService());
-        authProvider.setPasswordEncoder(passwordEncoder());
-        return authProvider;
-    }
+  @Bean
+  public PasswordEncoder passwordEncoder() {
+    return new BCryptPasswordEncoder();
+  }
 
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config)
-            throws Exception {
-        return config.getAuthenticationManager();
-    }
+  @Bean
+  public AuthenticationProvider authenticationProvider() {
+    DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+    authProvider.setUserDetailsService(userService.userDetailsService());
+    authProvider.setPasswordEncoder(passwordEncoder());
+    return authProvider;
+  }
 
-    @Bean
-    CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.addAllowedHeader("*");
-        corsConfiguration.addAllowedMethod("*");
-        corsConfiguration.addAllowedOrigin("*");
-        UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();
-        urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", corsConfiguration);
-        return urlBasedCorsConfigurationSource;
-    }
+  @Bean
+  public AuthenticationManager authenticationManager(AuthenticationConfiguration config)
+      throws Exception {
+    return config.getAuthenticationManager();
+  }
+
+
+  @Bean
+  CorsConfigurationSource corsConfigurationSource() {
+    CorsConfiguration corsConfiguration = new CorsConfiguration();
+    corsConfiguration.addAllowedHeader("*");
+    corsConfiguration.addAllowedMethod("*");
+    corsConfiguration.addAllowedOrigin("*");
+    UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();
+    urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", corsConfiguration);
+    return urlBasedCorsConfigurationSource;
+  }
 }

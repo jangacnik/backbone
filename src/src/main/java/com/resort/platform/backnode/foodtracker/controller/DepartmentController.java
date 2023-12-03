@@ -17,29 +17,33 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/department")
 public class DepartmentController {
-    @Autowired
-    private DepartmentService departmentService;
 
-    @PostMapping
-    public ResponseEntity<Void> addNewDepartment(@RequestBody Department department) {
-        departmentService.addNewDepartment(department);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
+  @Autowired
+  private DepartmentService departmentService;
 
-    @PostMapping("/employee")
-    public ResponseEntity<Void> addEmployeeToDepartment(@RequestBody AddEmployeeToDepartmentRequest bodyData) {
-        departmentService.addEmployeeToDepartment(bodyData.getEmployeeNumber(), bodyData.getDepartment());
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
+  @PostMapping
+  public ResponseEntity<Void> addNewDepartment(@RequestBody Department department) {
+    departmentService.addNewDepartment(department);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
 
-    @GetMapping("/{department}")
-    public ResponseEntity<DepartmentWithUsersResponse> getDepratmentByName(@PathVariable String department) throws DepartmentNotFoundException {
-        return ResponseEntity.ok(departmentService.getDepartmentByName(department));
-    }
+  @PostMapping("/employee")
+  public ResponseEntity<Void> addEmployeeToDepartment(
+      @RequestBody AddEmployeeToDepartmentRequest bodyData) {
+    departmentService.addEmployeeToDepartment(bodyData.getEmployeeNumber(),
+        bodyData.getDepartment());
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
 
-    @GetMapping("/all")
-    public ResponseEntity<List<Department>> getListOfAllDepartments() {
-        return ResponseEntity.ok(new ArrayList<>());
-    }
+  @GetMapping("/{department}")
+  public ResponseEntity<DepartmentWithUsersResponse> getDepratmentByName(
+      @PathVariable String department) throws DepartmentNotFoundException {
+    return ResponseEntity.ok(departmentService.getDepartmentByName(department));
+  }
+
+  @GetMapping("/all")
+  public ResponseEntity<List<Department>> getListOfAllDepartments() {
+    return ResponseEntity.ok(new ArrayList<>());
+  }
 
 }

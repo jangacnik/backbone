@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class FoodTrackerUserRequest {
-    private String username;
-    private String employeeNumber;
+
+  private String username;
+  private String employeeNumber;
 }

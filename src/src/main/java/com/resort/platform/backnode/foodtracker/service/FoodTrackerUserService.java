@@ -20,57 +20,61 @@ import java.util.Optional;
 @Service
 @AllArgsConstructor
 public class FoodTrackerUserService {
-    private AuthenticationService authenticationService;
-    private UserRepository userRepository;
-    private DepartmentService departmentService;
 
-    public void addNewFoodTrackerUser(NewFoodTrackerUserRequest newFoodTrackerUserRequest) {
-        if (StringUtils.isBlank(newFoodTrackerUserRequest.getEmployeeNumber())) {
-            throw new InvalidRequestException("Employee number is required");
-        }
-        authenticationService.addNewUser(newFoodTrackerUserRequest);
-        if (!CollectionUtils.isEmpty(newFoodTrackerUserRequest.getDepartments())) {
-            for (String dep: newFoodTrackerUserRequest.getDepartments()) {
-                departmentService.addEmployeeToDepartment(newFoodTrackerUserRequest.getEmployeeNumber(),dep);
-            }
-        }
+  private AuthenticationService authenticationService;
+  private UserRepository userRepository;
+  private DepartmentService departmentService;
+
+  public void addNewFoodTrackerUser(NewFoodTrackerUserRequest newFoodTrackerUserRequest) {
+    if (StringUtils.isBlank(newFoodTrackerUserRequest.getEmployeeNumber())) {
+      throw new InvalidRequestException("Employee number is required");
     }
-
-    public FoodTrackerUserWithDepartment getFoodTrackerUser(String username) {
-        Optional<User> userOptional = userRepository.findUserByEmailOrEmployeeNumber(username, username);
-        if(userOptional.isPresent()) {
-            User user = userOptional.get();
-            List<Department> departments = departmentService.getDepartmentsWithUser(user.getEmployeeNumber());
-            List<String> departmentNames = new ArrayList<>();
-            for (Department dep: departments) {
-                departmentNames.add(dep.getDepartmentName());
-            }
-            return FoodTrackerUserWithDepartment.builder()
-                    .departments(departmentNames)
-                    .firstName(user.getFirstName())
-                    .lastName(user.getLastName())
-                    .email(user.getEmail())
-                    .employeeNumber(user.getEmployeeNumber())
-                    .build();
-        }
-        throw new UsernameNotFoundException("User not found");
+    authenticationService.addNewUser(newFoodTrackerUserRequest);
+    if (!CollectionUtils.isEmpty(newFoodTrackerUserRequest.getDepartments())) {
+      for (String dep : newFoodTrackerUserRequest.getDepartments()) {
+        departmentService.addEmployeeToDepartment(newFoodTrackerUserRequest.getEmployeeNumber(),
+            dep);
+      }
     }
+  }
 
-    public User deleteFoodTrackerUser(String username) {
-       Optional<User> userOptional = userRepository.deleteUserByEmail(username);
-       if (userOptional.isPresent()) {
-           User deletedUser =  userOptional.get();
-           List<Department> optionalDepartmentList = departmentService.getDepartmentsWithUser(deletedUser.getEmployeeNumber());
-
-           for(Department dep : optionalDepartmentList) {
-               dep.getEmployees().remove(deletedUser.getEmployeeNumber());
-               departmentService.saveOrUpdateDepartment(dep);
-           }
-           return deletedUser;
-       }
-       return null;
+  public FoodTrackerUserWithDepartment getFoodTrackerUser(String username) {
+    Optional<User> userOptional = userRepository.findUserByEmailOrEmployeeNumber(username,
+        username);
+    if (userOptional.isPresent()) {
+      User user = userOptional.get();
+      List<Department> departments = departmentService.getDepartmentsWithUser(
+          user.getEmployeeNumber());
+      List<String> departmentNames = new ArrayList<>();
+      for (Department dep : departments) {
+        departmentNames.add(dep.getDepartmentName());
+      }
+      return FoodTrackerUserWithDepartment.builder()
+          .departments(departmentNames)
+          .firstName(user.getFirstName())
+          .lastName(user.getLastName())
+          .email(user.getEmail())
+          .employeeNumber(user.getEmployeeNumber())
+          .build();
     }
+    throw new UsernameNotFoundException("User not found");
+  }
 
+  public User deleteFoodTrackerUser(String username) {
+    Optional<User> userOptional = userRepository.deleteUserByEmail(username);
+    if (userOptional.isPresent()) {
+      User deletedUser = userOptional.get();
+      List<Department> optionalDepartmentList = departmentService.getDepartmentsWithUser(
+          deletedUser.getEmployeeNumber());
+
+      for (Department dep : optionalDepartmentList) {
+        dep.getEmployees().remove(deletedUser.getEmployeeNumber());
+        departmentService.saveOrUpdateDepartment(dep);
+      }
+      return deletedUser;
+    }
+    return null;
+  }
 
 
 }

@@ -9,17 +9,18 @@ import org.springframework.data.annotation.Id;
 @AllArgsConstructor
 @NoArgsConstructor
 public class FoodTrackerUser {
-    @Id
-    private String id;
-    private String lastName;
-    private String firstName;
-    private String email;
-    private String employeeNumber;
 
-    public FoodTrackerUser(String lastName, String firstName, String email, String employeeNumber) {
-        this.lastName = lastName;
-        this.firstName = firstName;
-        this.email = email;
-        this.employeeNumber = employeeNumber;
-    }
+  @Id
+  private String id;
+  private String lastName;
+  private String firstName;
+  private String email;
+  private String employeeNumber;
+
+  public FoodTrackerUser(String lastName, String firstName, String email, String employeeNumber) {
+    this.lastName = lastName;
+    this.firstName = firstName;
+    this.email = email;
+    this.employeeNumber = employeeNumber;
+  }
 }

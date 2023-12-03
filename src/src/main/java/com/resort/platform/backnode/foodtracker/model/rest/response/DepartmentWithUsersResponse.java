@@ -10,11 +10,13 @@ import java.util.List;
 @Getter
 @Setter
 public class DepartmentWithUsersResponse extends Department {
-    private final List<FoodTrackerUser> users = new ArrayList<>();
 
-    @Builder
-    public DepartmentWithUsersResponse(String id, String departmentName, ArrayList<String> employees, List<FoodTrackerUser> users) {
-        super(id, departmentName, employees);
-        this.users.addAll(users);
-    }
+  private final List<FoodTrackerUser> users = new ArrayList<>();
+
+  @Builder
+  public DepartmentWithUsersResponse(String id, String departmentName, ArrayList<String> employees,
+      List<FoodTrackerUser> users) {
+    super(id, departmentName, employees);
+    this.users.addAll(users);
+  }
 }

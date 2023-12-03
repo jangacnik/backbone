@@ -1,18 +1,18 @@
 package com.resort.platform.backnode.auth.repo;
 
 import com.resort.platform.backnode.auth.model.User;
+import java.util.Optional;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-import java.util.Optional;
-
 public interface UserRepository extends MongoRepository<User, String> {
-    Optional<User> findUserByEmail(String email);
 
-    Optional<User> findUserByEmployeeNumber(String employeeNumber);
+  Optional<User> findUserByEmail(String email);
 
-    Optional<User> findUserByEmployeeNumberOrEmail(String employeeNumber, String username);
+  Optional<User> findUserByEmployeeNumber(String employeeNumber);
 
-    Optional<User> deleteUserByEmail(String email);
+  Optional<User> findUserByEmployeeNumberOrEmail(String employeeNumber, String username);
 
-    Optional<User> deleteUserByEmployeeNumber(String employeeNumber);
+  Optional<User> deleteUserByEmail(String email);
+
+  Optional<User> deleteUserByEmployeeNumber(String employeeNumber);
 }

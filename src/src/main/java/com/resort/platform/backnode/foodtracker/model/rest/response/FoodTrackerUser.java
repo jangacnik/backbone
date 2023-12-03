@@ -6,8 +6,9 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class FoodTrackerUser {
-    private String lastName;
-    private String firstName;
-    private String email;
-    private String employeeNumber;
+
+  private String lastName;
+  private String firstName;
+  private String email;
+  private String employeeNumber;
 }

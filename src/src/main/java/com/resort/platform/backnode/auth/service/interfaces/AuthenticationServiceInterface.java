@@ -5,6 +5,8 @@ import com.resort.platform.backnode.auth.model.rest.request.NewUserRequest;
 import com.resort.platform.backnode.auth.model.rest.response.JwtResponse;
 
 public interface AuthenticationServiceInterface {
-    JwtResponse signin(SignIn request);
-    void addNewUser(NewUserRequest request);
+
+  JwtResponse signin(SignIn request);
+
+  void addNewUser(NewUserRequest request);
 }
