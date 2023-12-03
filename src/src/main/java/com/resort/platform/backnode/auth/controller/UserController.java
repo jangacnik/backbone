@@ -10,8 +10,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/user")
 @RequiredArgsConstructor
 public class UserController {
-    @GetMapping
-    public ResponseEntity<String> sayHello() {
-        return ResponseEntity.ok("Here is your resource");
-    }
+
+  @GetMapping
+  public ResponseEntity<String> sayHello() {
+    return ResponseEntity.ok("Here is your resource");
+  }
 }

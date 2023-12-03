@@ -4,7 +4,8 @@ import lombok.Data;
 
 @Data
 public class DepartmentDeletionRequest {
-    String employeeNumber;
-    String departmentName;
-    String id;
+
+  String employeeNumber;
+  String departmentName;
+  String id;
 }

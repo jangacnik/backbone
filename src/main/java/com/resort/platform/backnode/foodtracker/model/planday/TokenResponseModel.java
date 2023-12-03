@@ -8,10 +8,11 @@ import lombok.RequiredArgsConstructor;
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class TokenResponseModel {
-    String id_token;
-    String access_token;
-    long expires_in;
-    String token_type;
-    String refresh_token;
-    String scope;
+
+  String id_token;
+  String access_token;
+  long expires_in;
+  String token_type;
+  String refresh_token;
+  String scope;
 }

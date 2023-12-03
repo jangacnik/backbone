@@ -8,7 +8,8 @@ import lombok.RequiredArgsConstructor;
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class PagingSubModel {
-    int offset;
-    int limit;
-    int total;
+
+  int offset;
+  int limit;
+  int total;
 }

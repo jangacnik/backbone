@@ -14,18 +14,24 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @RestControllerAdvice
 public class DepartmentAdvice extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(value = {DepartmentNotFoundException.class})
-    protected ResponseEntity<Object> handleNotFoundDepartmentException(RuntimeException ex, WebRequest webRequest) {
-        return handleExceptionInternal(ex, ex.getMessage(), new HttpHeaders(), HttpStatus.NOT_FOUND, webRequest);
-    }
+  @ExceptionHandler(value = {DepartmentNotFoundException.class})
+  protected ResponseEntity<Object> handleNotFoundDepartmentException(RuntimeException ex,
+      WebRequest webRequest) {
+    return handleExceptionInternal(ex, ex.getMessage(), new HttpHeaders(), HttpStatus.NOT_FOUND,
+        webRequest);
+  }
 
-    @ExceptionHandler(value = {DepartmentAlreadyExistsException.class})
-    protected ResponseEntity<Object> handleAlreadyExistsDepartmentException(RuntimeException ex, WebRequest webRequest) {
-        return handleExceptionInternal(ex, ex.getMessage(), new HttpHeaders(), HttpStatus.CONFLICT, webRequest);
-    }
+  @ExceptionHandler(value = {DepartmentAlreadyExistsException.class})
+  protected ResponseEntity<Object> handleAlreadyExistsDepartmentException(RuntimeException ex,
+      WebRequest webRequest) {
+    return handleExceptionInternal(ex, ex.getMessage(), new HttpHeaders(), HttpStatus.CONFLICT,
+        webRequest);
+  }
 
-    @ExceptionHandler(value = {InvalidRequestException.class})
-    protected ResponseEntity<Object> handleInvalidQrPasscodeException(RuntimeException ex, WebRequest webRequest) {
-        return handleExceptionInternal(ex, ex.getMessage(), new HttpHeaders(), HttpStatus.CONFLICT, webRequest);
-    }
+  @ExceptionHandler(value = {InvalidRequestException.class})
+  protected ResponseEntity<Object> handleInvalidQrPasscodeException(RuntimeException ex,
+      WebRequest webRequest) {
+    return handleExceptionInternal(ex, ex.getMessage(), new HttpHeaders(), HttpStatus.CONFLICT,
+        webRequest);
+  }
 }

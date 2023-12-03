@@ -6,5 +6,6 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class TrackingQrData {
-    String secret;
+
+  String secret;
 }

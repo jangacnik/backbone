@@ -15,11 +15,12 @@ import java.util.ArrayList;
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class Department {
-    @Id
-    private String id;
-    @NotNull
-    @Indexed(unique = true)
-    private String departmentName;
-    @NotNull
-    private ArrayList<String> employees;
+
+  @Id
+  private String id;
+  @NotNull
+  @Indexed(unique = true)
+  private String departmentName;
+  @NotNull
+  private ArrayList<String> employees;
 }

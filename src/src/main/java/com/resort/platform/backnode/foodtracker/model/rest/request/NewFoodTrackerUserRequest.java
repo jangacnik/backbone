@@ -10,5 +10,6 @@ import java.util.List;
 @Setter
 @Getter
 public class NewFoodTrackerUserRequest extends NewUserRequest {
-    private List<String> departments;
+
+  private List<String> departments;
 }

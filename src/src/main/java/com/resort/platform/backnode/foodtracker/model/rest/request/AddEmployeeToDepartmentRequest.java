@@ -7,8 +7,9 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class AddEmployeeToDepartmentRequest {
-    @NotBlank
-    String department;
-    @NotBlank
-    String employeeNumber;
+
+  @NotBlank
+  String department;
+  @NotBlank
+  String employeeNumber;
 }

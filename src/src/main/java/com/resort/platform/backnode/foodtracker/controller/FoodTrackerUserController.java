@@ -14,23 +14,26 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/department/user")
 @AllArgsConstructor
 public class FoodTrackerUserController {
-    private FoodTrackerUserService foodTrackerUserService;
 
-    @PostMapping
-    public ResponseEntity<Void> addNewFoodTrackerUser(@RequestBody NewFoodTrackerUserRequest newFoodTrackerUserRequest) {
-        foodTrackerUserService.addNewFoodTrackerUser(newFoodTrackerUserRequest);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
+  private FoodTrackerUserService foodTrackerUserService;
 
-    @DeleteMapping
-    public ResponseEntity<User> deleteFoodTrackerUser(@RequestBody FoodTrackerUserRequest fUser) {
-        return ResponseEntity.ok(foodTrackerUserService.deleteFoodTrackerUser(fUser.getUsername()));
+  @PostMapping
+  public ResponseEntity<Void> addNewFoodTrackerUser(
+      @RequestBody NewFoodTrackerUserRequest newFoodTrackerUserRequest) {
+    foodTrackerUserService.addNewFoodTrackerUser(newFoodTrackerUserRequest);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
 
-    }
+  @DeleteMapping
+  public ResponseEntity<User> deleteFoodTrackerUser(@RequestBody FoodTrackerUserRequest fUser) {
+    return ResponseEntity.ok(foodTrackerUserService.deleteFoodTrackerUser(fUser.getUsername()));
 
-    @GetMapping
-    public ResponseEntity<FoodTrackerUserWithDepartment> getFoodTrackerUser(@RequestBody FoodTrackerUserRequest fUser) {
-        return ResponseEntity.ok(foodTrackerUserService.getFoodTrackerUser(fUser.getUsername()));
-    }
+  }
+
+  @GetMapping
+  public ResponseEntity<FoodTrackerUserWithDepartment> getFoodTrackerUser(
+      @RequestBody FoodTrackerUserRequest fUser) {
+    return ResponseEntity.ok(foodTrackerUserService.getFoodTrackerUser(fUser.getUsername()));
+  }
 
 }
