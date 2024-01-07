@@ -29,6 +29,7 @@ public class TaskListArchiveModel {
   @NotNull
   private List<TaskModel> tasks;
   @NotNull
-  private LocalDate taskListDate;
-
+  private String taskListDate;
+  @NotNull
+  private String activeFrom;
 }

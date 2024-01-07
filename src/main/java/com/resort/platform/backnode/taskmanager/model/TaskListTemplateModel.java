@@ -7,6 +7,7 @@ import com.resort.platform.backnode.taskmanager.model.util.ShortDepartmentModel;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -34,4 +35,6 @@ public class TaskListTemplateModel {
   private RepeatModel repeat;
   @NotNull
   private boolean active;
+  @NotNull
+  private String activeFrom;
 }

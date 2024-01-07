@@ -51,9 +51,7 @@ public class ScheduledTaskService {
     calendar.setTime(newDate);
     LocalDate localDate = LocalDate.ofInstant(calendar.toInstant(), ZoneId.systemDefault());
     DayOfWeek dayOfWeek = DayOfWeek.of(calendar.get(Calendar.DAY_OF_WEEK));
-    Integer dayOfWeekInt = calendar.get(Calendar.DAY_OF_WEEK);
     Integer dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
-    Integer weekOfMonth = calendar.get(Calendar.WEEK_OF_MONTH);
     YearMonth yearMonth = YearMonth.now();
     // kateri ponedeljek v mescu je npr.
     Integer dayInWeekOfMonth = calendar.get(Calendar.DAY_OF_WEEK_IN_MONTH);
@@ -111,7 +109,8 @@ public class ScheduledTaskService {
       archiveModel.setTasks(tmpModel.getTasks().stream().filter(TaskModel::isActive).collect(
           Collectors.toList()));
       archiveModel.setDepartments(tmpModel.getDepartments());
-      archiveModel.setTaskListDate(localDate);
+      archiveModel.setTaskListDate(localDate.toString());
+      archiveModel.setActiveFrom(tmpModel.getActiveFrom());
       if(!archiveModel.getTasks().isEmpty()) {
         taskListArchiveRepository.save(archiveModel);
       }
@@ -126,7 +125,7 @@ public class ScheduledTaskService {
     LocalDate localDate = LocalDate.of(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
         calendar.get(Calendar.DAY_OF_WEEK));
     localDate = localDate.minusDays(1);
-    List<TaskListArchiveModel> yesterdaysArchiveTasks = taskListArchiveRepository.getAllByTaskListDate(localDate).orElseThrow();
+    List<TaskListArchiveModel> yesterdaysArchiveTasks = taskListArchiveRepository.findAllByTaskListDate(localDate.toString()).orElseThrow();
     List<TaskListArchiveModel> yesterdaysArchiveTasksWithNotCompletedTask
         = yesterdaysArchiveTasks.stream().filter(
             tasklist -> tasklist.getTasks().stream().anyMatch(task -> !task.isCompleted() && task.isTakeover())
@@ -137,7 +136,8 @@ public class ScheduledTaskService {
       archiveModel.setTasks(tmpModel.getTasks().stream().filter(task -> task.isTakeover() && !task.isCompleted()).collect(
           Collectors.toList()));
       archiveModel.setDepartments(tmpModel.getDepartments());
-      archiveModel.setTaskListDate(localDate);
+      archiveModel.setTaskListDate(localDate.toString());
+      archiveModel.setActiveFrom(tmpModel.getActiveFrom());
       if(!archiveModel.getTasks().isEmpty()) {
         taskListArchiveRepository.save(archiveModel);
       }

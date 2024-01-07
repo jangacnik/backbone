@@ -9,6 +9,7 @@ import com.resort.platform.backnode.taskmanager.repo.TaskListArchiveRepository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,17 @@ public class TaskListArchiveService {
 
 
   public List<TaskListArchiveModel> getAllUserTasksListByDate(ShortDepartmentModel departmentModel, LocalDate localDate) {
-    List<TaskListArchiveModel> archiveModelList = taskListArchiveRepository.getAllByTaskListDate(localDate).orElseThrow();
+//    List<TaskListArchiveModel> archiveModelList = taskListArchiveRepository
+//        .findAllByTaskListDate_DayOfMonthAndTaskListDate_MonthAndTaskListDate_Year(
+//            localDate.getDayOfMonth(), (short) localDate.getMonth().getValue(),
+//        localDate.getYear()).orElseThrow();
+    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm");
+    LocalTime localTime = LocalTime.now();
+    List<TaskListArchiveModel> archiveModelList = taskListArchiveRepository
+        .findAllByTaskListDate(
+            localDate.toString()).orElseThrow();
+    archiveModelList = archiveModelList.stream().filter(ar -> localTime.isAfter(LocalTime.parse(ar.getActiveFrom()))).collect(
+        Collectors.toList());
     return archiveModelList.stream().filter(archiveModel -> archiveModel.getDepartments().contains(departmentModel)).collect(
         Collectors.toList());
   }
