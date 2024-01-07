@@ -48,6 +48,8 @@ public class ScheduledTaskService {
     YearMonth yearMonth = YearMonth.now();
     // kateri ponedeljek v mescu je npr.
     Integer dayInWeekOfMonth = calendar.get(Calendar.DAY_OF_WEEK_IN_MONTH);
+    List<TaskListTemplateModel> filteredActiveButNoRepeat = templateModelList.stream().filter(tpm -> tpm.getRepeat().getRepeatType().equals(RepeatEnum.NONE)).toList();
+
     List<TaskListTemplateModel> filteredTemplateModelListWeeklyTask = templateModelList.stream()
         .filter(
             templateModel ->
@@ -91,11 +93,14 @@ public class ScheduledTaskService {
 
                     )
         ).toList();
+
     List<TaskListTemplateModel> filteredTemplateModelList = Stream.concat(
         filteredTemplateModelListWeeklyTask.stream(),
         filteredTemplateModelListMonthlyTaskType1.stream()).toList();
     filteredTemplateModelList = Stream.concat(filteredTemplateModelList.stream(),
         filteredTemplateModelListMonthlyType2.stream()).toList();
+    filteredTemplateModelList = Stream.concat(filteredTemplateModelList.stream(),
+        filteredActiveButNoRepeat.stream()).toList();
     for (TaskListTemplateModel tmpModel : filteredTemplateModelList) {
       TaskListArchiveModel archiveModel = new TaskListArchiveModel();
       archiveModel.setTitle(tmpModel.getTitle());
@@ -107,6 +112,10 @@ public class ScheduledTaskService {
       if (!archiveModel.getTasks().isEmpty()) {
         taskListArchiveRepository.save(archiveModel);
       }
+    }
+    for (TaskListTemplateModel tmpModel: filteredActiveButNoRepeat) {
+      tmpModel.setActive(false);
+      taskListTemplateService.updateTaskListTemplate(tmpModel);
     }
   }
 
