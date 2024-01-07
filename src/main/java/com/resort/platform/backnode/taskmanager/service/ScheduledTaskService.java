@@ -1,7 +1,5 @@
 package com.resort.platform.backnode.taskmanager.service;
 
-import com.resort.platform.backnode.foodtracker.model.Department;
-import com.resort.platform.backnode.foodtracker.service.DepartmentService;
 import com.resort.platform.backnode.taskmanager.model.TaskListArchiveModel;
 import com.resort.platform.backnode.taskmanager.model.TaskListTemplateModel;
 import com.resort.platform.backnode.taskmanager.model.TaskModel;
@@ -12,11 +10,9 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,16 +22,13 @@ import org.springframework.stereotype.Service;
 @Service
 public class ScheduledTaskService {
 
+  private static String takeoverPostfix = " (Yesterdays incomplete)";
   @Autowired
   private TaskListArchiveService taskListArchiveService;
-
   @Autowired
   private TaskListTemplateService taskListTemplateService;
-
   @Autowired
   private TaskListArchiveRepository taskListArchiveRepository;
-
-  private static String takeoverPostfix = " (Yesterdays incomplete)";
 
   /**
    * Generates new Task List for the next day at midnight each day. Only Task list that should be
@@ -111,37 +104,36 @@ public class ScheduledTaskService {
       archiveModel.setDepartments(tmpModel.getDepartments());
       archiveModel.setTaskListDate(localDate.toString());
       archiveModel.setActiveFrom(tmpModel.getActiveFrom());
-      if(!archiveModel.getTasks().isEmpty()) {
+      if (!archiveModel.getTasks().isEmpty()) {
         taskListArchiveRepository.save(archiveModel);
       }
     }
   }
-
-  @Scheduled(cron = "0 0 0 * * *")
-  private void generateTaskListWithTakeoverTasks() {
-    Calendar calendar = Calendar.getInstance();
-    Date newDate = new Date();
-    calendar.setTime(newDate);
-    LocalDate localDate = LocalDate.of(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
-        calendar.get(Calendar.DAY_OF_WEEK));
-    localDate = localDate.minusDays(1);
-    List<TaskListArchiveModel> yesterdaysArchiveTasks = taskListArchiveRepository.findAllByTaskListDate(localDate.toString()).orElseThrow();
-    List<TaskListArchiveModel> yesterdaysArchiveTasksWithNotCompletedTask
-        = yesterdaysArchiveTasks.stream().filter(
-            tasklist -> tasklist.getTasks().stream().anyMatch(task -> !task.isCompleted() && task.isTakeover())
-    ).toList();
-    for (TaskListArchiveModel tmpModel : yesterdaysArchiveTasksWithNotCompletedTask) {
-      TaskListArchiveModel archiveModel = new TaskListArchiveModel();
-      archiveModel.setTitle(tmpModel.getTitle() + takeoverPostfix);
-      archiveModel.setTasks(tmpModel.getTasks().stream().filter(task -> task.isTakeover() && !task.isCompleted()).collect(
-          Collectors.toList()));
-      archiveModel.setDepartments(tmpModel.getDepartments());
-      archiveModel.setTaskListDate(localDate.toString());
-      archiveModel.setActiveFrom(tmpModel.getActiveFrom());
-      if(!archiveModel.getTasks().isEmpty()) {
-        taskListArchiveRepository.save(archiveModel);
-      }
-    }
-
-  }
+//
+//  @Scheduled(cron = "0 0 0 * * *")
+//  private void generateTaskListWithTakeoverTasks() {
+//    Calendar calendar = Calendar.getInstance();
+//    Date newDate = new Date();
+//    calendar.setTime(newDate);
+//    LocalDate localDate = LocalDate.of(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
+//        calendar.get(Calendar.DAY_OF_WEEK));
+//    localDate = localDate.minusDays(1);
+//    List<TaskListArchiveModel> yesterdaysArchiveTasks = taskListArchiveRepository.findAllByTaskListDate(localDate.toString()).orElseThrow();
+//    List<TaskListArchiveModel> yesterdaysArchiveTasksWithNotCompletedTask
+//        = yesterdaysArchiveTasks.stream().filter(
+//            tasklist -> tasklist.getTasks().stream().anyMatch(task -> !task.isCompleted() && task.isTakeover())
+//    ).toList();
+//    for (TaskListArchiveModel tmpModel : yesterdaysArchiveTasksWithNotCompletedTask) {
+//      TaskListArchiveModel archiveModel = new TaskListArchiveModel();
+//      archiveModel.setTitle(tmpModel.getTitle() + takeoverPostfix);
+//      archiveModel.setTasks(tmpModel.getTasks().stream().filter(task -> task.isTakeover() && !task.isCompleted()).collect(
+//          Collectors.toList()));
+//      archiveModel.setDepartments(tmpModel.getDepartments());
+//      archiveModel.setTaskListDate(localDate.toString());
+//      archiveModel.setActiveFrom(tmpModel.getActiveFrom());
+//      if(!archiveModel.getTasks().isEmpty()) {
+//        taskListArchiveRepository.save(archiveModel);
+//      }
+//    }
+//  }
 }

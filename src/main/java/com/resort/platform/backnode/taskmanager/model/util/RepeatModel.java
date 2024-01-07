@@ -6,12 +6,12 @@ import jakarta.validation.constraints.NotNull;
 import java.time.DayOfWeek;
 import java.util.List;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 @Data
 @RequiredArgsConstructor
 public class RepeatModel {
+
   @NotNull
   RepeatEnum repeatType;
   // repeat every X Weeks / Months

@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class ShortUserModel {
+
   private String userId;
   private String name;
   private String surname;

@@ -3,9 +3,7 @@ package com.resort.platform.backnode.taskmanager.controller;
 import com.resort.platform.backnode.taskmanager.model.TaskListArchiveModel;
 import com.resort.platform.backnode.taskmanager.model.rest.request.ArchiveTaskListRequest;
 import com.resort.platform.backnode.taskmanager.model.rest.request.TaskStatusChangeRequest;
-import com.resort.platform.backnode.taskmanager.model.util.ShortDepartmentModel;
 import com.resort.platform.backnode.taskmanager.service.TaskListArchiveService;
-import java.time.LocalDate;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,12 +22,15 @@ public class TaskListArchiveController {
 
   @GetMapping
   public ResponseEntity<List<TaskListArchiveModel>> getTaskListByDate(@RequestBody
-      ArchiveTaskListRequest request) {
-    return ResponseEntity.ok(taskListArchiveService.getAllUserTasksListByDate(request.getDepartment(), request.getDate()));
+  ArchiveTaskListRequest request) {
+    return ResponseEntity.ok(
+        taskListArchiveService.getAllUserTasksListByDate(request.getDepartment(),
+            request.getDate()));
   }
 
   @PostMapping("/status")
-  public ResponseEntity<TaskListArchiveModel> updateTaskStatus(@RequestBody TaskStatusChangeRequest statusChangeRequest) {
+  public ResponseEntity<TaskListArchiveModel> updateTaskStatus(
+      @RequestBody TaskStatusChangeRequest statusChangeRequest) {
     return ResponseEntity.ok(taskListArchiveService.changeTaskCompletedStatus(statusChangeRequest));
   }
 }

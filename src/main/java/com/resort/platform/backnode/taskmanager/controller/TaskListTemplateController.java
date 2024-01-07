@@ -23,7 +23,8 @@ public class TaskListTemplateController {
   private TaskListTemplateService taskListTemplateService;
 
   @PostMapping
-  public ResponseEntity<Void> createNewTaskListTemplate(@RequestBody @Valid TaskListTemplateModel templateModel) {
+  public ResponseEntity<Void> createNewTaskListTemplate(
+      @RequestBody @Valid TaskListTemplateModel templateModel) {
     this.taskListTemplateService.createTaskListTemplate(templateModel);
     return ResponseEntity.ok(null);
   }
@@ -34,17 +35,20 @@ public class TaskListTemplateController {
   }
 
   @GetMapping("/{active}")
-  public ResponseEntity<List<TaskListTemplateModel>> getAllTaskListTemplatesByStatus(@PathVariable boolean active) {
+  public ResponseEntity<List<TaskListTemplateModel>> getAllTaskListTemplatesByStatus(
+      @PathVariable boolean active) {
     return ResponseEntity.ok(taskListTemplateService.getAllTaskListTemplatesByActiveStatus(active));
   }
 
-  @PutMapping ResponseEntity<TaskListTemplateModel> updateTaskListTemplate(@RequestBody @Valid TaskListTemplateModel templateModel) {
-      return ResponseEntity.ok(taskListTemplateService.updateTaskListTemplate(templateModel));
+  @PutMapping
+  ResponseEntity<TaskListTemplateModel> updateTaskListTemplate(
+      @RequestBody @Valid TaskListTemplateModel templateModel) {
+    return ResponseEntity.ok(taskListTemplateService.updateTaskListTemplate(templateModel));
   }
 
   @DeleteMapping("/{taskId}")
   ResponseEntity<TaskListTemplateModel> deleteTaskListTemplate(@PathVariable String taskId) {
-      taskListTemplateService.deleteTaskListTemplate(taskId);
-      return ResponseEntity.ok(null);
+    taskListTemplateService.deleteTaskListTemplate(taskId);
+    return ResponseEntity.ok(null);
   }
 }

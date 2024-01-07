@@ -1,7 +1,6 @@
 package com.resort.platform.backnode.taskmanager.service;
 
 import com.resort.platform.backnode.taskmanager.model.TaskListArchiveModel;
-import com.resort.platform.backnode.taskmanager.model.TaskListTemplateModel;
 import com.resort.platform.backnode.taskmanager.model.TaskModel;
 import com.resort.platform.backnode.taskmanager.model.rest.request.TaskStatusChangeRequest;
 import com.resort.platform.backnode.taskmanager.model.util.ShortDepartmentModel;
@@ -17,11 +16,13 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class TaskListArchiveService {
+
   @Autowired
   private TaskListArchiveRepository taskListArchiveRepository;
 
 
-  public List<TaskListArchiveModel> getAllUserTasksListByDate(ShortDepartmentModel departmentModel, LocalDate localDate) {
+  public List<TaskListArchiveModel> getAllUserTasksListByDate(ShortDepartmentModel departmentModel,
+      LocalDate localDate) {
 //    List<TaskListArchiveModel> archiveModelList = taskListArchiveRepository
 //        .findAllByTaskListDate_DayOfMonthAndTaskListDate_MonthAndTaskListDate_Year(
 //            localDate.getDayOfMonth(), (short) localDate.getMonth().getValue(),
@@ -31,16 +32,21 @@ public class TaskListArchiveService {
     List<TaskListArchiveModel> archiveModelList = taskListArchiveRepository
         .findAllByTaskListDate(
             localDate.toString()).orElseThrow();
-    archiveModelList = archiveModelList.stream().filter(ar -> localTime.isAfter(LocalTime.parse(ar.getActiveFrom()))).collect(
-        Collectors.toList());
-    return archiveModelList.stream().filter(archiveModel -> archiveModel.getDepartments().contains(departmentModel)).collect(
-        Collectors.toList());
+    archiveModelList = archiveModelList.stream()
+        .filter(ar -> localTime.isAfter(LocalTime.parse(ar.getActiveFrom()))).collect(
+            Collectors.toList());
+    return archiveModelList.stream()
+        .filter(archiveModel -> archiveModel.getDepartments().contains(departmentModel)).collect(
+            Collectors.toList());
   }
 
-  public TaskListArchiveModel changeTaskCompletedStatus(TaskStatusChangeRequest statusChangeRequest) {
+  public TaskListArchiveModel changeTaskCompletedStatus(
+      TaskStatusChangeRequest statusChangeRequest) {
     TaskListArchiveModel archiveModel = taskListArchiveRepository.findById(
         statusChangeRequest.getTaskListId()).orElseThrow();
-    TaskModel task = archiveModel.getTasks().stream().filter(tsk -> tsk.getId().equals(statusChangeRequest.getTaskId())).findFirst().orElseThrow();
+    TaskModel task = archiveModel.getTasks().stream()
+        .filter(tsk -> tsk.getId().equals(statusChangeRequest.getTaskId())).findFirst()
+        .orElseThrow();
     int index = archiveModel.getTasks().indexOf(task);
     if (task.isCompleted()) {
       task.setCompletedBy(null);

@@ -8,6 +8,7 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class SupervisorRatingModel {
+
   private String id;
   private ShortUserModel supervisor;
   private TaskRating rating;

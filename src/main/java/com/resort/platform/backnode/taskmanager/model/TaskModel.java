@@ -19,6 +19,7 @@ import org.springframework.data.annotation.Id;
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class TaskModel {
+
   @Id
   private String id;
   @NotBlank

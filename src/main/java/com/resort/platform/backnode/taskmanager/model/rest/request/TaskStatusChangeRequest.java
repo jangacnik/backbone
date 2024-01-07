@@ -7,6 +7,7 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class TaskStatusChangeRequest {
+
   private ShortUserModel user;
   private String taskListId;
   private String taskId;

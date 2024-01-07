@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class ShortDepartmentModel {
+
   private String departmentId;
   private String departmentName;
 }

@@ -96,7 +96,7 @@ public class FoodTrackerUserService {
             .filter((department -> department.getEmployees().contains(us.getEmployeeNumber())))
             .map(Department::getDepartmentName).toList();
         usersWithDepartments.add(FoodTrackerUserWithDepartment.builder()
-                .id(us.getId())
+            .id(us.getId())
             .departments(departmentNames).firstName(us.getFirstName()).lastName(us.getLastName())
             .email(us.getEmail()).employeeNumber(us.getEmployeeNumber()).roles(us.getRoles())
             .build());

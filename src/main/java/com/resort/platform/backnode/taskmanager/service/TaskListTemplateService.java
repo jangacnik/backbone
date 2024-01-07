@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class TaskListTemplateService {
+
   @Autowired
   private TaskListTemplateRepository taskListTemplateRepository;
   @Autowired
@@ -29,8 +30,8 @@ public class TaskListTemplateService {
   }
 
   public TaskListTemplateModel updateTaskListTemplate(TaskListTemplateModel templateModel) {
-    for(TaskModel tsk: templateModel.getTasks()) {
-      if(tsk.getId() == null || tsk.getId().isBlank()) {
+    for (TaskModel tsk : templateModel.getTasks()) {
+      if (tsk.getId() == null || tsk.getId().isBlank()) {
         tsk.setId(UUID.randomUUID().toString());
       }
     }
