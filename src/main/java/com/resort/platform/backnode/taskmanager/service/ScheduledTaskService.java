@@ -109,31 +109,31 @@ public class ScheduledTaskService {
       }
     }
   }
-//
-//  @Scheduled(cron = "0 0 0 * * *")
-//  private void generateTaskListWithTakeoverTasks() {
-//    Calendar calendar = Calendar.getInstance();
-//    Date newDate = new Date();
-//    calendar.setTime(newDate);
-//    LocalDate localDate = LocalDate.of(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
-//        calendar.get(Calendar.DAY_OF_WEEK));
-//    localDate = localDate.minusDays(1);
-//    List<TaskListArchiveModel> yesterdaysArchiveTasks = taskListArchiveRepository.findAllByTaskListDate(localDate.toString()).orElseThrow();
-//    List<TaskListArchiveModel> yesterdaysArchiveTasksWithNotCompletedTask
-//        = yesterdaysArchiveTasks.stream().filter(
-//            tasklist -> tasklist.getTasks().stream().anyMatch(task -> !task.isCompleted() && task.isTakeover())
-//    ).toList();
-//    for (TaskListArchiveModel tmpModel : yesterdaysArchiveTasksWithNotCompletedTask) {
-//      TaskListArchiveModel archiveModel = new TaskListArchiveModel();
-//      archiveModel.setTitle(tmpModel.getTitle() + takeoverPostfix);
-//      archiveModel.setTasks(tmpModel.getTasks().stream().filter(task -> task.isTakeover() && !task.isCompleted()).collect(
-//          Collectors.toList()));
-//      archiveModel.setDepartments(tmpModel.getDepartments());
-//      archiveModel.setTaskListDate(localDate.toString());
-//      archiveModel.setActiveFrom(tmpModel.getActiveFrom());
-//      if(!archiveModel.getTasks().isEmpty()) {
-//        taskListArchiveRepository.save(archiveModel);
-//      }
-//    }
-//  }
+
+  @Scheduled(cron = "0 0 0 * * *")
+  private void generateTaskListWithTakeoverTasks() {
+    Calendar calendar = Calendar.getInstance();
+    Date newDate = new Date();
+    calendar.setTime(newDate);
+    LocalDate localDate = LocalDate.of(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
+        calendar.get(Calendar.DAY_OF_WEEK));
+    localDate = localDate.minusDays(1);
+    List<TaskListArchiveModel> yesterdaysArchiveTasks = taskListArchiveRepository.findAllByTaskListDate(localDate.toString()).orElseThrow();
+    List<TaskListArchiveModel> yesterdaysArchiveTasksWithNotCompletedTask
+        = yesterdaysArchiveTasks.stream().filter(
+            tasklist -> tasklist.getTasks().stream().anyMatch(task -> !task.isCompleted() && task.isTakeover())
+    ).toList();
+    for (TaskListArchiveModel tmpModel : yesterdaysArchiveTasksWithNotCompletedTask) {
+      TaskListArchiveModel archiveModel = new TaskListArchiveModel();
+      archiveModel.setTitle(tmpModel.getTitle() + takeoverPostfix);
+      archiveModel.setTasks(tmpModel.getTasks().stream().filter(task -> task.isTakeover() && !task.isCompleted()).collect(
+          Collectors.toList()));
+      archiveModel.setDepartments(tmpModel.getDepartments());
+      archiveModel.setTaskListDate(localDate.toString());
+      archiveModel.setActiveFrom(tmpModel.getActiveFrom());
+      if(!archiveModel.getTasks().isEmpty()) {
+        taskListArchiveRepository.save(archiveModel);
+      }
+    }
+  }
 }
