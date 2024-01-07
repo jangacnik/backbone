@@ -44,9 +44,16 @@ public class SecurityConfiguration {
     http.cors(Customizer.withDefaults()).csrf(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(request -> request
             .requestMatchers("/api/v1/auth/**").permitAll()
-            .requestMatchers("/api/v1/reserve/**", "/api/v1/department/**", "/api/v1/admin/**",
-                "/api/v1/track/price").hasRole("ADMIN")
-            .requestMatchers("/api/v1/reserve/**", "/api/v1/department/**", "/api/v1/track/**",
+            .requestMatchers(
+                "/api/v1/reserve/**",
+                "/api/v1/department/**",
+                "/api/v1/admin/**",
+                "/api/v1/track/price",
+                "/api/v1/task/template/**").hasRole("ADMIN")
+            .requestMatchers(
+                "/api/v1/reserve/**",
+                "/api/v1/department/**",
+                "/api/v1/track/**",
                 "/api/v1/reserve").hasRole("USER")
             .anyRequest().authenticated())
 
