@@ -20,13 +20,8 @@ public class TaskListArchiveService {
   @Autowired
   private TaskListArchiveRepository taskListArchiveRepository;
 
-
   public List<TaskListArchiveModel> getAllUserTasksListByDate(ShortDepartmentModel departmentModel,
       LocalDate localDate) {
-//    List<TaskListArchiveModel> archiveModelList = taskListArchiveRepository
-//        .findAllByTaskListDate_DayOfMonthAndTaskListDate_MonthAndTaskListDate_Year(
-//            localDate.getDayOfMonth(), (short) localDate.getMonth().getValue(),
-//        localDate.getYear()).orElseThrow();
     DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm");
     LocalTime localTime = LocalTime.now();
     List<TaskListArchiveModel> archiveModelList = taskListArchiveRepository
