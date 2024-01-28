@@ -30,6 +30,11 @@ public class ScheduledTaskService {
   @Autowired
   private TaskListArchiveRepository taskListArchiveRepository;
 
+  public void forceGeneration() {
+    this.generateNewTaskListsForNextDay();
+    this.generateTaskListWithTakeoverTasks();
+  }
+
   /**
    * Generates new Task List for the next day at midnight each day. Only Task list that should be
    * repeated that day will be generated. To generate a new list the Template of the list has to be

@@ -1,6 +1,7 @@
 package com.resort.platform.backnode.taskmanager.controller;
 
 import com.resort.platform.backnode.taskmanager.model.TaskListTemplateModel;
+import com.resort.platform.backnode.taskmanager.service.ScheduledTaskService;
 import com.resort.platform.backnode.taskmanager.service.TaskListTemplateService;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -22,6 +23,8 @@ public class TaskListTemplateController {
   @Autowired
   private TaskListTemplateService taskListTemplateService;
 
+  @Autowired
+  private ScheduledTaskService scheduledTaskService;
   @PostMapping
   public ResponseEntity<Void> createNewTaskListTemplate(
       @RequestBody @Valid TaskListTemplateModel templateModel) {
@@ -51,4 +54,11 @@ public class TaskListTemplateController {
     taskListTemplateService.deleteTaskListTemplate(taskId);
     return ResponseEntity.ok(null);
   }
+
+  @GetMapping("/force/gen")
+  ResponseEntity<Void> forceArchiveListGeneration() {
+    scheduledTaskService.forceGeneration();
+    return ResponseEntity.ok(null);
+  }
+
 }
