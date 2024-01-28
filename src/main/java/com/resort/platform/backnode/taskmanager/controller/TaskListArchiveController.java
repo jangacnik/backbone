@@ -59,6 +59,11 @@ public class TaskListArchiveController {
     return ResponseEntity.ok(tasks);
   }
 
+  @GetMapping("/all/{date}")
+  public ResponseEntity<List<TaskListArchiveModel>> getAllTaskByDate(@PathVariable String date) {
+    return ResponseEntity.ok(taskListArchiveService.getAllTaskByDate(LocalDate.parse(date)));
+  }
+
   @PostMapping("/status")
   public ResponseEntity<TaskListArchiveModel> updateTaskStatus(
       @RequestBody TaskStatusChangeRequest statusChangeRequest) {

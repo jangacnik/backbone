@@ -129,8 +129,7 @@ public class ScheduledTaskService {
     Calendar calendar = Calendar.getInstance();
     Date newDate = new Date();
     calendar.setTime(newDate);
-    LocalDate localDate = LocalDate.of(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
-        calendar.get(Calendar.DAY_OF_WEEK));
+    LocalDate localDate = LocalDate.ofInstant(calendar.toInstant(), ZoneId.systemDefault());
     localDate = localDate.minusDays(1);
     List<TaskListArchiveModel> yesterdaysArchiveTasks = taskListArchiveRepository.findAllByTaskListDate(localDate.toString()).orElseThrow();
     List<TaskListArchiveModel> yesterdaysArchiveTasksWithNotCompletedTask

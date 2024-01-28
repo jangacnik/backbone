@@ -35,6 +35,12 @@ public class TaskListArchiveService {
             Collectors.toList());
   }
 
+  public List<TaskListArchiveModel> getAllTaskByDate(LocalDate localDate) {
+    return taskListArchiveRepository
+        .findAllByTaskListDate(
+            localDate.toString()).orElseThrow();
+  }
+
   public TaskListArchiveModel changeTaskCompletedStatus(
       TaskStatusChangeRequest statusChangeRequest) {
     TaskListArchiveModel archiveModel = taskListArchiveRepository.findById(
