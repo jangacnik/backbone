@@ -13,6 +13,7 @@ import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -111,6 +112,9 @@ public class ScheduledTaskService {
       archiveModel.setTitle(tmpModel.getTitle());
       archiveModel.setTasks(tmpModel.getTasks().stream().filter(TaskModel::isActive).collect(
           Collectors.toList()));
+      for(TaskModel tsk: archiveModel.getTasks()) {
+        tsk.setId(UUID.randomUUID().toString());
+      }
       archiveModel.setDepartments(tmpModel.getDepartments());
       archiveModel.setTaskListDate(localDate.toString());
       archiveModel.setActiveFrom(tmpModel.getActiveFrom());

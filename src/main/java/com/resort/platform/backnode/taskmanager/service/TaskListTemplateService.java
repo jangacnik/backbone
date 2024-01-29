@@ -18,6 +18,9 @@ public class TaskListTemplateService {
   private DepartmentService departmentService;
 
   public void createTaskListTemplate(TaskListTemplateModel templateModel) {
+    for(TaskModel tsk: templateModel.getTasks()) {
+      tsk.setId(UUID.randomUUID().toString());
+    }
     this.taskListTemplateRepository.save(templateModel);
   }
 
