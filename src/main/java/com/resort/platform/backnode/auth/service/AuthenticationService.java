@@ -68,8 +68,9 @@ public class AuthenticationService implements AuthenticationServiceInterface {
   }
 
   public JwtResponse signinAdmin(SignIn request) {
-    authenticationManager.authenticate(
-        new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+    UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
+        new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword());
+    authenticationManager.authenticate(usernamePasswordAuthenticationToken);
     var user = userRepository.findUserByEmail(request.getEmail())
         .orElseThrow(() -> new IllegalArgumentException("Invalid email or password"));
     if (user.getRoles().contains(Role.ADMIN)) {
