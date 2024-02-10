@@ -12,6 +12,7 @@ import com.resort.platform.backnode.auth.service.interfaces.AuthenticationServic
 import java.util.ArrayList;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -36,11 +37,15 @@ public class AuthenticationService implements AuthenticationServiceInterface {
       throw new UserAlreadyExistsExceptions(
           "User with E-mail: " + request.getEmail() + " already exists");
     }
+    String password = request.getPassword();
+    if(StringUtils.isBlank(password) || StringUtils.isEmpty(password)) {
+      password = request.getFirstName() + request.getEmployeeNumber();
+    }
     var user = User.builder()
         .firstName(request.getFirstName())
         .lastName(request.getLastName())
         .employeeNumber(request.getEmployeeNumber())
-        .email(request.getEmail()).password(passwordEncoder.encode(request.getPassword()))
+        .email(request.getEmail()).password(passwordEncoder.encode(password))
         .roles(request.getRoles() != null ? request.getRoles() : new ArrayList<>()).build();
     userRepository.save(user);
   }

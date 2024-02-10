@@ -81,7 +81,13 @@ public class ReservationService {
    * @param mealReservation reservation with types of meals chosen
    */
   public void addReservationForNextDay(MealReservation mealReservation) {
-    LocalDate localDate = LocalDate.now().plusDays(1);
+
+    LocalDate localDate = LocalDate.now();
+    if (mealReservation.getReservationDate() != null) {
+      localDate = mealReservation.getReservationDate();
+    } else {
+      localDate = localDate.plusDays(1);
+    }
     mealReservation.setId(mealReservation.getEmployeeNumber() + "_" + localDate.toString());
     mealReservation.setReservationTime(LocalDateTime.now());
     mealReservation.setReservationDate(localDate);
