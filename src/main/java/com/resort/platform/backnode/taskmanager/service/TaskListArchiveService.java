@@ -2,6 +2,7 @@ package com.resort.platform.backnode.taskmanager.service;
 
 import com.resort.platform.backnode.taskmanager.model.TaskListArchiveModel;
 import com.resort.platform.backnode.taskmanager.model.TaskModel;
+import com.resort.platform.backnode.taskmanager.model.rest.request.AssigneeTaskListRequest;
 import com.resort.platform.backnode.taskmanager.model.rest.request.TaskStatusChangeRequest;
 import com.resort.platform.backnode.taskmanager.model.util.ShortDepartmentModel;
 import com.resort.platform.backnode.taskmanager.repo.TaskListArchiveRepository;
@@ -39,6 +40,18 @@ public class TaskListArchiveService {
     return taskListArchiveRepository
         .findAllByTaskListDate(
             localDate.toString()).orElseThrow();
+  }
+
+  public void addAssignee(AssigneeTaskListRequest assigneeRequest) {
+    TaskListArchiveModel archiveModel = taskListArchiveRepository.findById(
+        assigneeRequest.getTaskListId()).orElseThrow();
+    TaskModel task = archiveModel.getTasks().stream()
+        .filter(tsk -> tsk.getId().equals(assigneeRequest.getTaskId())).findFirst()
+        .orElseThrow();
+    int index = archiveModel.getTasks().indexOf(task);
+    task.setAssignee(assigneeRequest.getAssignee());
+    archiveModel.getTasks().set(index,task);
+    taskListArchiveRepository.save(archiveModel);
   }
 
   public TaskListArchiveModel changeTaskCompletedStatus(

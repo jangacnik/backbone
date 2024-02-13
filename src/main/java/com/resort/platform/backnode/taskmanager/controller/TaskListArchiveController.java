@@ -6,6 +6,7 @@ import com.resort.platform.backnode.foodtracker.service.DepartmentService;
 import com.resort.platform.backnode.foodtracker.service.FoodTrackerUserService;
 import com.resort.platform.backnode.taskmanager.model.TaskListArchiveModel;
 import com.resort.platform.backnode.taskmanager.model.rest.request.ArchiveTaskListRequest;
+import com.resort.platform.backnode.taskmanager.model.rest.request.AssigneeTaskListRequest;
 import com.resort.platform.backnode.taskmanager.model.rest.request.TaskStatusChangeRequest;
 import com.resort.platform.backnode.taskmanager.model.util.ShortDepartmentModel;
 import com.resort.platform.backnode.taskmanager.service.TaskListArchiveService;
@@ -18,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -68,5 +70,12 @@ public class TaskListArchiveController {
   public ResponseEntity<TaskListArchiveModel> updateTaskStatus(
       @RequestBody TaskStatusChangeRequest statusChangeRequest) {
     return ResponseEntity.ok(taskListArchiveService.changeTaskCompletedStatus(statusChangeRequest));
+  }
+
+  @PutMapping("/assign")
+  public ResponseEntity<Void> setAssigne(
+      @RequestBody AssigneeTaskListRequest assigneeRequest) {
+    taskListArchiveService.addAssignee(assigneeRequest);
+    return ResponseEntity.ok(null);
   }
 }
