@@ -8,6 +8,7 @@ import com.resort.platform.backnode.foodtracker.exception.InvalidRequestExceptio
 import com.resort.platform.backnode.foodtracker.model.Department;
 import com.resort.platform.backnode.foodtracker.model.rest.request.NewFoodTrackerUserRequest;
 import com.resort.platform.backnode.foodtracker.model.rest.response.FoodTrackerUserWithDepartment;
+import com.resort.platform.backnode.taskmanager.model.util.ShortDepartmentModel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -70,9 +71,9 @@ public class FoodTrackerUserService {
       User user = userOptional.get();
       List<Department> departments = departmentService.getDepartmentsWithUser(
           user.getEmployeeNumber());
-      List<String> departmentNames = new ArrayList<>();
+      List<ShortDepartmentModel> departmentNames = new ArrayList<>();
       for (Department dep : departments) {
-        departmentNames.add(dep.getDepartmentName());
+        departmentNames.add(new ShortDepartmentModel(dep.getId(),dep.getDepartmentName()));
       }
       return FoodTrackerUserWithDepartment.builder().departments(departmentNames)
           .firstName(user.getFirstName()).lastName(user.getLastName()).email(user.getEmail())
@@ -92,12 +93,15 @@ public class FoodTrackerUserService {
       List<FoodTrackerUserWithDepartment> usersWithDepartments = new ArrayList<>();
       List<Department> departments = departmentService.getAllDepartments();
       for (User us : userList) {
-        List<String> departmentNames = departments.stream()
-            .filter((department -> department.getEmployees().contains(us.getEmployeeNumber())))
-            .map(Department::getDepartmentName).toList();
+        List<Department> departmentNames = departments.stream()
+            .filter((department -> department.getEmployees().contains(us.getEmployeeNumber()))).toList();
+        List<ShortDepartmentModel> shModel = new ArrayList<>();
+        for (Department dp : departmentNames) {
+          shModel.add(new ShortDepartmentModel(dp.getId(), dp.getDepartmentName()));
+        }
         usersWithDepartments.add(FoodTrackerUserWithDepartment.builder()
             .id(us.getId())
-            .departments(departmentNames).firstName(us.getFirstName()).lastName(us.getLastName())
+            .departments(shModel).firstName(us.getFirstName()).lastName(us.getLastName())
             .email(us.getEmail()).employeeNumber(us.getEmployeeNumber()).roles(us.getRoles())
             .build());
       }
@@ -160,9 +164,9 @@ public class FoodTrackerUserService {
             dep.getDepartmentName());
       }
     }
-    for (String dep : updatedUser.getDepartments()) {
+    for (ShortDepartmentModel dep : updatedUser.getDepartments()) {
       departmentService.addEmployeeToDepartmentByDepartmentName(updatedUser.getEmployeeNumber(),
-          dep);
+          dep.getDepartmentName());
     }
   }
 }

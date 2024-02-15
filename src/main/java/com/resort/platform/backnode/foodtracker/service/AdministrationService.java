@@ -1,11 +1,14 @@
 package com.resort.platform.backnode.foodtracker.service;
 
 import com.resort.platform.backnode.foodtracker.model.planday.DepartmentResponseModel;
+import com.resort.platform.backnode.foodtracker.model.planday.ShiftsModel;
 import com.resort.platform.backnode.foodtracker.model.planday.TokenResponseModel;
 import com.resort.platform.backnode.foodtracker.model.planday.UserResponseModel;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,6 +105,22 @@ public class AdministrationService {
         HttpMethod.GET,
         entity,
         UserResponseModel.class);
+
+    return Objects.requireNonNull(responseModelResponseEntity.getBody());
+  }
+
+  public ShiftsModel getAvailableEmployees(String urlString, String token, String clientid, String depId, String date)
+      throws IOException, URISyntaxException {
+    RestTemplate restTemplate = new RestTemplate();
+    URI uri = new URI(urlString+depId + "&from=" + date + "&to=" +date + "&shiftStatus=Assigned");
+    HttpHeaders headers = new HttpHeaders();
+    headers.add("client_id", clientid);
+    headers.add("Authorization", "Bearer " + token);
+    HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(null, headers);
+    ResponseEntity<ShiftsModel> responseModelResponseEntity = restTemplate.exchange(uri,
+        HttpMethod.GET,
+        entity,
+        ShiftsModel.class);
 
     return Objects.requireNonNull(responseModelResponseEntity.getBody());
   }

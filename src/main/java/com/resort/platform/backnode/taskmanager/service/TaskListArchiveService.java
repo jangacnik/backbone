@@ -28,9 +28,12 @@ public class TaskListArchiveService {
     List<TaskListArchiveModel> archiveModelList = taskListArchiveRepository
         .findAllByTaskListDate(
             localDate.toString()).orElseThrow();
-    archiveModelList = archiveModelList.stream()
-        .filter(ar -> localTime.isAfter(LocalTime.parse(ar.getActiveFrom()))).collect(
-            Collectors.toList());
+    LocalDate lc = LocalDate.now();
+    if (lc.equals(localDate)) {
+      archiveModelList = archiveModelList.stream()
+          .filter(ar -> localTime.isAfter(LocalTime.parse(ar.getActiveFrom()))).collect(
+              Collectors.toList());
+    }
     return archiveModelList.stream()
         .filter(archiveModel -> archiveModel.getDepartments().contains(departmentModel)).collect(
             Collectors.toList());

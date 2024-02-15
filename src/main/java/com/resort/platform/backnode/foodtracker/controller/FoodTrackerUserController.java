@@ -5,8 +5,11 @@ import com.resort.platform.backnode.foodtracker.model.rest.request.FoodTrackerUs
 import com.resort.platform.backnode.foodtracker.model.rest.request.NewFoodTrackerUserRequest;
 import com.resort.platform.backnode.foodtracker.model.rest.response.FoodTrackerUserWithDepartment;
 import com.resort.platform.backnode.foodtracker.service.FoodTrackerUserService;
+import com.resort.platform.backnode.taskmanager.model.util.ShortUserModel;
 import java.util.List;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,13 +20,13 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/department/user")
-@AllArgsConstructor
 public class FoodTrackerUserController {
-
+@Autowired
   private FoodTrackerUserService foodTrackerUserService;
 
   /**
@@ -85,6 +88,7 @@ public class FoodTrackerUserController {
   public ResponseEntity<List<FoodTrackerUserWithDepartment>> getFoodTrackerUser() {
     return ResponseEntity.ok(foodTrackerUserService.getAllFoodTrackerUsers());
   }
+
 
   /**
    * Returns Employee data from user via his JWT token
