@@ -1,17 +1,25 @@
 package com.resort.platform.backnode.foodtracker.service;
 
+import com.resort.platform.backnode.auth.model.enums.Role;
+import com.resort.platform.backnode.foodtracker.exception.DepartmentAlreadyExistsException;
+import com.resort.platform.backnode.foodtracker.model.Department;
 import com.resort.platform.backnode.foodtracker.model.planday.DepartmentResponseModel;
+import com.resort.platform.backnode.foodtracker.model.planday.DepartmentSubModel;
+import com.resort.platform.backnode.foodtracker.model.planday.EmployeeSubModel;
 import com.resort.platform.backnode.foodtracker.model.planday.ShiftsModel;
 import com.resort.platform.backnode.foodtracker.model.planday.TokenResponseModel;
 import com.resort.platform.backnode.foodtracker.model.planday.UserResponseModel;
+import com.resort.platform.backnode.foodtracker.model.rest.request.NewFoodTrackerUserRequest;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -24,7 +32,8 @@ import org.springframework.web.client.RestTemplate;
 
 @Service
 public class AdministrationService {
-
+  @Autowired
+      private DepartmentService departmentService;
   Logger logger = LoggerFactory.getLogger(AdministrationService.class);
 
   /**
@@ -108,6 +117,7 @@ public class AdministrationService {
 
     return Objects.requireNonNull(responseModelResponseEntity.getBody());
   }
+
 
   public ShiftsModel getAvailableEmployees(String urlString, String token, String clientid, String depId, String date)
       throws IOException, URISyntaxException {

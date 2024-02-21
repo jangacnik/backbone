@@ -6,6 +6,7 @@ import com.resort.platform.backnode.foodtracker.model.rest.request.AddEmployeeTo
 import com.resort.platform.backnode.foodtracker.model.rest.request.DepartmentDeletionRequest;
 import com.resort.platform.backnode.foodtracker.model.rest.response.DepartmentWithUsersResponse;
 import com.resort.platform.backnode.foodtracker.service.DepartmentService;
+import com.resort.platform.backnode.taskmanager.model.util.ShortDepartmentModel;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,7 +87,10 @@ public class DepartmentController {
   public ResponseEntity<List<String>> getListOfAllDepartmentsName() {
     return ResponseEntity.ok(departmentService.getAllDepartmentsNames());
   }
-
+  @GetMapping("/all/short")
+  public ResponseEntity<List<ShortDepartmentModel>> getListOfAllDepartmentsShort() {
+    return ResponseEntity.ok(departmentService.getAllDepartmentsShort());
+  }
   /**
    * Removes employee from department
    *

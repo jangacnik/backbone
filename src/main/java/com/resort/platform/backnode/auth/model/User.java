@@ -20,7 +20,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Document("user")
+@Document("user_vestlia")
 @Builder
 
 @JsonIgnoreProperties(ignoreUnknown = true)

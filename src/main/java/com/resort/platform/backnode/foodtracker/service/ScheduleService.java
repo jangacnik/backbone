@@ -15,4 +15,9 @@ public class ScheduleService {
   private void generateNewTaskListsForNextDay() throws IOException, URISyntaxException {
     administrationController.getToken();
   }
+
+  @Scheduled(cron = "0 3-15/12 * * *")
+  private void updateUsers() throws IOException, URISyntaxException {
+    administrationController.updateEmployeesAndDepartmentsFromPlandayRest();
+  }
 }

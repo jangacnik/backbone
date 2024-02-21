@@ -21,6 +21,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -82,6 +83,7 @@ public class AdministrationController {
   @PostMapping("/update")
   public ResponseEntity<Void> updateEmployeesAndDepartmentsFromPlandayRest()
       throws IOException, URISyntaxException {
+    ArrayList<String> employeeIds = new ArrayList<>();
     accessToken = administrationService.getToken(tokenUrl, token, clientId);
     DepartmentResponseModel res = administrationService.getDepartments(departmentUrl, accessToken,
         clientId);
@@ -104,14 +106,16 @@ public class AdministrationController {
       userResponseModel = administrationService.getEmployees(employeesUrl, accessToken, clientId,
           offset);
       for (EmployeeSubModel emp : userResponseModel.getData()) {
+        employeeIds.add(emp.getSalaryIdentifier());
         try {
           NewFoodTrackerUserRequest usr = new NewFoodTrackerUserRequest();
+          usr.setId(String.valueOf(emp.getId()));
           usr.setEmail(emp.getEmail());
           usr.setFirstName(emp.getFirstName());
           usr.setLastName(emp.getLastName());
           usr.setDepartments(emp.getDepartments());
-          usr.setEmployeeNumber(String.valueOf(emp.getId()));
-          usr.setPassword(usr.getLastName() + usr.getEmployeeNumber());
+          usr.setEmployeeNumber(String.valueOf(emp.getSalaryIdentifier()));
+          usr.setPassword(usr.getLastName() + emp.getSalaryIdentifier());
           usr.setRoles(roles);
           foodTrackerUserService.addNewFoodTrackerUser(usr, true);
         } catch (Exception e) {
@@ -119,6 +123,11 @@ public class AdministrationController {
         }
       }
       offset += 50;
+    }
+
+    List<String> removeIds = foodTrackerUserService.getAllDeletedUsers(employeeIds);
+    for (String id: removeIds) {
+      foodTrackerUserService.deleteFoodTrackerUserById(id);
     }
     return ResponseEntity.ok(null);
   }
@@ -133,12 +142,12 @@ public class AdministrationController {
     List<ShiftUserModel> shiftUserModelList = new ArrayList<>();
     for (ShiftsSubModel sub: filteredShifts) {
     try {
-        FoodTrackerUser fd = foodTrackerUserService.getFoodTrackerUser(sub.getEmployeeId());
+        FoodTrackerUser fd = foodTrackerUserService.getFoodTrackerUserById(sub.getEmployeeId());
         if (fd != null) {
           ShiftUserModel su = new ShiftUserModel();
           su.setUser(new ShortUserModel(fd.getEmployeeNumber(),fd.getFirstName(), fd.getLastName()));
-          su.setStartTime(sub.getStartDateTime().split("T")[0]);
-          su.setEndTime(sub.getEndDateTime().split("T")[0]);
+          su.setStartTime(sub.getStartDateTime().split("T")[1]);
+          su.setEndTime(sub.getEndDateTime().split("T")[1]);
           shiftUserModelList.add(su);
         }
     } catch (Exception e) {

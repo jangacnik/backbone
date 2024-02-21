@@ -6,6 +6,7 @@ import com.resort.platform.backnode.foodtracker.model.rest.request.NewFoodTracke
 import com.resort.platform.backnode.foodtracker.model.rest.response.FoodTrackerUserWithDepartment;
 import com.resort.platform.backnode.foodtracker.service.FoodTrackerUserService;
 import com.resort.platform.backnode.taskmanager.model.util.ShortUserModel;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

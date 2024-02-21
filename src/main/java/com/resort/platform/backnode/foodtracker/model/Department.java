@@ -10,7 +10,7 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
-@Document("departments")
+@Document("departments_test")
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class Department {

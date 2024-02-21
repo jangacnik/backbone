@@ -8,6 +8,7 @@ import com.resort.platform.backnode.foodtracker.model.Department;
 import com.resort.platform.backnode.foodtracker.model.rest.response.DepartmentWithUsersResponse;
 import com.resort.platform.backnode.foodtracker.model.rest.response.FoodTrackerUser;
 import com.resort.platform.backnode.foodtracker.repo.DepartmentRepository;
+import com.resort.platform.backnode.taskmanager.model.util.ShortDepartmentModel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -142,6 +143,14 @@ public class DepartmentService {
   public List<String> getAllDepartmentsNames() {
     List<Department> deps = departmentRepository.findAll();
     return deps.stream().map(Department::getDepartmentName).collect(Collectors.toList());
+  }
+  public List<ShortDepartmentModel> getAllDepartmentsShort() {
+    List<Department> deps = departmentRepository.findAll();
+    List<ShortDepartmentModel> shortDepartmentModels = new ArrayList<>();
+    for (Department d: deps) {
+      shortDepartmentModels.add(new ShortDepartmentModel(d.getId(),d.getDepartmentName()));
+    }
+    return shortDepartmentModels;
   }
 
   /**

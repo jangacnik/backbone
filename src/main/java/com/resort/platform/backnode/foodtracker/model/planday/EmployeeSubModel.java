@@ -15,5 +15,6 @@ public class EmployeeSubModel {
   String lastName;
   String firstName;
   String email;
+  String salaryIdentifier;
   ArrayList<String> departments;
 }

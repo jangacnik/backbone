@@ -42,6 +42,7 @@ public class AuthenticationService implements AuthenticationServiceInterface {
       password = request.getFirstName() + request.getEmployeeNumber();
     }
     var user = User.builder()
+        .id(request.getId())
         .firstName(request.getFirstName())
         .lastName(request.getLastName())
         .employeeNumber(request.getEmployeeNumber())

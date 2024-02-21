@@ -12,6 +12,7 @@ import com.resort.platform.backnode.taskmanager.model.util.ShortDepartmentModel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -26,6 +27,16 @@ public class FoodTrackerUserService {
   private UserRepository userRepository;
   private DepartmentService departmentService;
   private JwtService jwtService;
+
+  public List<String> getAllDeletedUsers (ArrayList<String> ids) {
+    ids.add("0123456789");
+    List<String> removeIds = new ArrayList<>();
+    Optional<ArrayList<User>>usrs = userRepository.findAllByEmployeeNumberNotIn(ids);
+    if (usrs.isPresent()) {
+      removeIds = usrs.get().stream().map(User::getId).toList();
+    }
+    return removeIds;
+  }
 
   /**
    * Adds the given user to the database if he does not already exist. Adds them to the department
@@ -67,6 +78,23 @@ public class FoodTrackerUserService {
   public FoodTrackerUserWithDepartment getFoodTrackerUser(String username) {
     Optional<User> userOptional = userRepository.findUserByEmployeeNumberOrEmail(username,
         username);
+    if (userOptional.isPresent()) {
+      User user = userOptional.get();
+      List<Department> departments = departmentService.getDepartmentsWithUser(
+          user.getEmployeeNumber());
+      List<ShortDepartmentModel> departmentNames = new ArrayList<>();
+      for (Department dep : departments) {
+        departmentNames.add(new ShortDepartmentModel(dep.getId(),dep.getDepartmentName()));
+      }
+      return FoodTrackerUserWithDepartment.builder().departments(departmentNames)
+          .firstName(user.getFirstName()).lastName(user.getLastName()).email(user.getEmail())
+          .employeeNumber(user.getEmployeeNumber()).roles(user.getRoles()).id(user.getId()).build();
+    }
+    throw new UsernameNotFoundException("User not found");
+  }
+
+  public FoodTrackerUserWithDepartment getFoodTrackerUserById(String id) {
+    Optional<User> userOptional = userRepository.findById(id);
     if (userOptional.isPresent()) {
       User user = userOptional.get();
       List<Department> departments = departmentService.getDepartmentsWithUser(
@@ -131,6 +159,21 @@ public class FoodTrackerUserService {
     return null;
   }
 
+  public User deleteFoodTrackerUserById(String id) {
+    Optional<User> userOptional = userRepository.deleteUserById(id);
+    if (userOptional.isPresent()) {
+      User deletedUser = userOptional.get();
+      List<Department> optionalDepartmentList = departmentService.getDepartmentsWithUser(
+          deletedUser.getEmployeeNumber());
+      for (Department dep : optionalDepartmentList) {
+        dep.getEmployees().remove(deletedUser.getEmployeeNumber());
+        departmentService.saveOrUpdateDepartment(dep);
+      }
+      return deletedUser;
+    }
+    return null;
+  }
+
   /**
    * Get user from JWT token
    *
@@ -168,5 +211,10 @@ public class FoodTrackerUserService {
       departmentService.addEmployeeToDepartmentByDepartmentName(updatedUser.getEmployeeNumber(),
           dep.getDepartmentName());
     }
+  }
+
+
+  public void removeUser(ArrayList<String> employeeNumbers) {
+
   }
 }

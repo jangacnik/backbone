@@ -49,9 +49,11 @@ public class TaskListArchiveController {
 
     FoodTrackerUserWithDepartment usr = foodTrackerUserService.getCurrentUser(token);
     List<Department> userDepartments = departmentService.getAllDepartments();
-    userDepartments = userDepartments.stream().filter(department -> usr.getDepartments().contains(department.getDepartmentName())).collect(
+
+
+    userDepartments = userDepartments.stream().filter(department -> usr.getDepartments()
+        .contains(new ShortDepartmentModel(department.getId(),department.getDepartmentName()))).collect(
         Collectors.toList());
-//    List<ShortDepartmentModel> userShortDepartments = Collections.emptyList();
 
     List<TaskListArchiveModel> tasks = new java.util.ArrayList<>(Collections.emptyList());
     for (Department dep: userDepartments) {
