@@ -45,14 +45,12 @@ public class SecurityConfiguration {
             .requestMatchers(
                 "/api/v1/reserve/**",
                 "/api/v1/department/**",
-                "/api/v1/admin/**",
-                "/api/v1/track/price",
-                "/api/v1/task/template/**").hasRole("ADMIN")
-            .requestMatchers(
-                "/api/v1/reserve/**",
-                "/api/v1/department/**",
                 "/api/v1/track/**",
-                "/api/v1/reserve").hasRole("USER")
+                "/api/v1/reserve",
+                "/api/v1/track/**").hasRole("USER")
+
+            .requestMatchers(
+                "/api/v1/**").hasRole("ADMIN")
             .anyRequest().authenticated())
 
         .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))

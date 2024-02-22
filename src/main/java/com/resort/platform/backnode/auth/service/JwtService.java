@@ -40,7 +40,7 @@ public class JwtService implements JwtServiceInterface {
     return Jwts.builder()
         .setSubject(userDetails.getUsername())
         .setIssuedAt(new Date(System.currentTimeMillis()))
-        .setExpiration(new Date(System.currentTimeMillis() + 200000 * 60 * 24))
+        .setExpiration(new Date(System.currentTimeMillis() + 600000 * 60 * 24))
         .signWith(getSigningKey(), SignatureAlgorithm.HS256).compact();
   }
 
@@ -58,7 +58,7 @@ public class JwtService implements JwtServiceInterface {
   private String generateToken(String authorities, UserDetails userDetails) {
     return Jwts.builder().claim("roles", authorities).setSubject(userDetails.getUsername())
         .setIssuedAt(new Date(System.currentTimeMillis()))
-        .setExpiration(new Date(System.currentTimeMillis() + 100000 * 60 * 24))
+        .setExpiration(new Date(System.currentTimeMillis() + 400000 * 60 * 24))
         .signWith(getSigningKey(), SignatureAlgorithm.HS256).compact();
   }
 

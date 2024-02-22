@@ -16,7 +16,7 @@ public class ScheduleService {
     administrationController.getToken();
   }
 
-  @Scheduled(cron = "0 3-15/12 * * *")
+  @Scheduled(cron = "59 59 12,23 * * ?")
   private void updateUsers() throws IOException, URISyntaxException {
     administrationController.updateEmployeesAndDepartmentsFromPlandayRest();
   }
