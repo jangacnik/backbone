@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,6 +36,7 @@ public class DepartmentController {
    * @param department - deparment object
    * @return - OK on success, exception if deparment already exists
    */
+  @PreAuthorize("hasAnyRole('ADMIN')")
   @PostMapping
   public ResponseEntity<Void> addNewDepartment(@RequestBody Department department) {
     departmentService.addNewDepartment(department);
@@ -47,6 +49,7 @@ public class DepartmentController {
    * @param bodyData - department name and employeeNumber
    * @return - OK on success
    */
+  @PreAuthorize("hasAnyRole('ADMIN')")
   @PostMapping("/employee")
   public ResponseEntity<Void> addEmployeeToDepartment(
       @RequestBody AddEmployeeToDepartmentRequest bodyData) {
@@ -62,6 +65,7 @@ public class DepartmentController {
    * @return DepartmentWithUser
    * @throws DepartmentNotFoundException
    */
+  @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
   @GetMapping("/{department}")
   public ResponseEntity<DepartmentWithUsersResponse> getDepratmentByName(
       @PathVariable String department) throws DepartmentNotFoundException {
@@ -73,6 +77,7 @@ public class DepartmentController {
    *
    * @return list of departments
    */
+  @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
   @GetMapping("/all")
   public ResponseEntity<List<Department>> getListOfAllDepartments() {
     return ResponseEntity.ok(departmentService.getAllDepartments());
@@ -83,10 +88,12 @@ public class DepartmentController {
    *
    * @return list of all department names
    */
+  @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
   @GetMapping("/all/names")
   public ResponseEntity<List<String>> getListOfAllDepartmentsName() {
     return ResponseEntity.ok(departmentService.getAllDepartmentsNames());
   }
+  @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
   @GetMapping("/all/short")
   public ResponseEntity<List<ShortDepartmentModel>> getListOfAllDepartmentsShort() {
     return ResponseEntity.ok(departmentService.getAllDepartmentsShort());
@@ -97,6 +104,7 @@ public class DepartmentController {
    * @param departmentDeletionRequest - employeeNumber and department name
    * @return OK if success
    */
+  @PreAuthorize("hasAnyRole('ADMIN')")
   @DeleteMapping
   public ResponseEntity<Void> deleteEmployeeFromDepartment(
       @RequestBody DepartmentDeletionRequest departmentDeletionRequest) {

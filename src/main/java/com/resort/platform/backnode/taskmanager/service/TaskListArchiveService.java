@@ -3,17 +3,27 @@ package com.resort.platform.backnode.taskmanager.service;
 import com.resort.platform.backnode.taskmanager.model.TaskListArchiveModel;
 import com.resort.platform.backnode.taskmanager.model.TaskModel;
 import com.resort.platform.backnode.taskmanager.model.rest.request.AssigneeTaskListRequest;
+import com.resort.platform.backnode.taskmanager.model.rest.request.TaskCommentRequest;
+import com.resort.platform.backnode.taskmanager.model.rest.request.TaskRatingRequest;
 import com.resort.platform.backnode.taskmanager.model.rest.request.TaskStatusChangeRequest;
 import com.resort.platform.backnode.taskmanager.model.util.ShortDepartmentModel;
+import com.resort.platform.backnode.taskmanager.model.util.ShortUserModel;
+import com.resort.platform.backnode.taskmanager.model.util.SupervisorCommentModel;
+import com.resort.platform.backnode.taskmanager.model.util.SupervisorRatingModel;
 import com.resort.platform.backnode.taskmanager.repo.TaskListArchiveRepository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 @Service
 public class TaskListArchiveService {
@@ -75,5 +85,69 @@ public class TaskListArchiveService {
     archiveModel.getTasks().get(index).setCompleted(!task.isCompleted());
     taskListArchiveRepository.save(archiveModel);
     return archiveModel;
+  }
+
+
+  public int migrateTaskModel() {
+    List<TaskListArchiveModel> taskListArchiveModelList = taskListArchiveRepository.findAll();
+    int taskListsMigrated = 0;
+    for (TaskListArchiveModel taskListArchiveModel: taskListArchiveModelList) {
+      List<TaskModel> tasks = new ArrayList<>();
+      for (TaskModel taskModel: taskListArchiveModel.getTasks()){
+        List<ShortUserModel> assignees = new ArrayList<>();
+        if (taskModel.getAssignee() != null) {
+          assignees.add(taskModel.getAssignee());
+        }
+        taskModel.setAssignees(assignees);
+        taskModel.setAssignee(null);
+        tasks.add(taskModel);
+      }
+      taskListArchiveModel.setTasks(tasks);
+      taskListsMigrated++;
+      taskListArchiveRepository.save(taskListArchiveModel);
+    }
+    return taskListsMigrated;
+  }
+
+  public TaskModel rateTask(TaskRatingRequest taskRatingRequest) {
+    Optional<TaskListArchiveModel> taskListArchiveModelOptional = taskListArchiveRepository.findById(taskRatingRequest.getTaskListId());
+    if (taskListArchiveModelOptional.isPresent()) {
+      TaskListArchiveModel taskListArchiveModel = taskListArchiveModelOptional.get();
+      TaskModel taskModel = taskListArchiveModel.getTasks().stream().filter( task -> taskRatingRequest.getTaskId().equals(task.getId())).findFirst().orElseThrow();
+      int index = taskListArchiveModel.getTasks().indexOf(taskModel);
+      SupervisorRatingModel supervisorRatingModel = new SupervisorRatingModel(UUID.randomUUID().toString(), taskRatingRequest.getUser(), taskRatingRequest.getRating(), LocalDateTime.now());
+      if (taskModel.getSupervisorRatings() != null && !ObjectUtils.isEmpty(taskModel.getSupervisorRatings())) {
+        taskModel.getSupervisorRatings().add(supervisorRatingModel);
+      } else {
+        List<SupervisorRatingModel> supervisorRatingModelList = new ArrayList<>();
+        supervisorRatingModelList.add(supervisorRatingModel);
+        taskModel.setSupervisorRatings(supervisorRatingModelList);
+      }
+      taskListArchiveModel.getTasks().set(index, taskModel);
+      taskListArchiveRepository.save(taskListArchiveModel);
+      return taskModel;
+    }
+    return null;
+  }
+
+  public TaskModel commentTask(TaskCommentRequest taskCommentRequest) {
+    Optional<TaskListArchiveModel> taskListArchiveModelOptional = taskListArchiveRepository.findById(taskCommentRequest.getTaskListId());
+    if (taskListArchiveModelOptional.isPresent()) {
+      TaskListArchiveModel taskListArchiveModel = taskListArchiveModelOptional.get();
+      TaskModel taskModel = taskListArchiveModel.getTasks().stream().filter( task -> taskCommentRequest.getTaskId().equals(task.getId())).findFirst().orElseThrow();
+      int index = taskListArchiveModel.getTasks().indexOf(taskModel);
+      SupervisorCommentModel supervisorCommentModel = new SupervisorCommentModel(UUID.randomUUID().toString(), taskCommentRequest.getUser(), taskCommentRequest.getComment(), LocalDateTime.now());
+      if (taskModel.getSupervisorComments() != null && !ObjectUtils.isEmpty(taskModel.getSupervisorComments())) {
+        taskModel.getSupervisorComments().add(supervisorCommentModel);
+      } else {
+        List<SupervisorCommentModel> supervisorCommentModelList = new ArrayList<>();
+        supervisorCommentModelList.add(supervisorCommentModel);
+        taskModel.setSupervisorComments(supervisorCommentModelList);
+      }
+      taskListArchiveModel.getTasks().set(index, taskModel);
+      taskListArchiveRepository.save(taskListArchiveModel);
+      return taskModel;
+    }
+    return null;
   }
 }

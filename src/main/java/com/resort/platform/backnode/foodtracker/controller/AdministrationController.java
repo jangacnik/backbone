@@ -20,16 +20,14 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -65,6 +63,7 @@ public class AdministrationController {
 
   private String accessToken  = null;
 
+  @PreAuthorize("hasAnyRole('ADMIN')")
   @GetMapping("/token")
   public void getToken() throws IOException, URISyntaxException {
     accessToken = administrationService.getToken(tokenUrl, token, clientId);
@@ -80,6 +79,7 @@ public class AdministrationController {
    * @throws IOException
    * @throws URISyntaxException
    */
+  @PreAuthorize("hasAnyRole('ADMIN')")
   @PostMapping("/update")
   public ResponseEntity<Void> updateEmployeesAndDepartmentsFromPlandayRest()
       throws IOException, URISyntaxException {
@@ -132,7 +132,7 @@ public class AdministrationController {
     return ResponseEntity.ok(null);
   }
 
-
+  @PreAuthorize("hasAnyRole('ADMIN')")
   @GetMapping("/{date}/available/{dep}")
   public ResponseEntity<Object> getAvailableUsers(@PathVariable String date, @PathVariable String dep)
       throws IOException, URISyntaxException {
@@ -157,4 +157,65 @@ public class AdministrationController {
 
     return ResponseEntity.ok(shiftUserModelList);
   }
+
+
+  // FOR SCHEDULED TASK
+
+  public ResponseEntity<Void> updateEmployeesAndDepartmentsFromPlandayRestScheduled()
+      throws IOException, URISyntaxException {
+    ArrayList<String> employeeIds = new ArrayList<>();
+    accessToken = administrationService.getToken(tokenUrl, token, clientId);
+    DepartmentResponseModel res = administrationService.getDepartments(departmentUrl, accessToken,
+        clientId);
+    for (DepartmentSubModel dep : res.getData()) {
+      try {
+        departmentService.addNewDepartment(
+            new Department(String.valueOf(dep.getId()), dep.getName(), new ArrayList<>()));
+      } catch (DepartmentAlreadyExistsException e) {
+        // do not terminate on exception
+      }
+    }
+    int total;
+    int offset = 0;
+    UserResponseModel userResponseModel = administrationService.getEmployees(employeesUrl,
+        accessToken, clientId, offset);
+    total = userResponseModel.getPaging().getTotal();
+    List<Role> roles = new ArrayList<>();
+    roles.add(Role.USER);
+    while (userResponseModel.getPaging().getOffset() < total) {
+      userResponseModel = administrationService.getEmployees(employeesUrl, accessToken, clientId,
+          offset);
+      for (EmployeeSubModel emp : userResponseModel.getData()) {
+        employeeIds.add(emp.getSalaryIdentifier());
+        try {
+          NewFoodTrackerUserRequest usr = new NewFoodTrackerUserRequest();
+          usr.setId(String.valueOf(emp.getId()));
+          usr.setEmail(emp.getEmail());
+          usr.setFirstName(emp.getFirstName());
+          usr.setLastName(emp.getLastName());
+          usr.setDepartments(emp.getDepartments());
+          usr.setEmployeeNumber(String.valueOf(emp.getSalaryIdentifier()));
+          usr.setPassword(usr.getLastName() + emp.getSalaryIdentifier());
+          usr.setRoles(roles);
+          foodTrackerUserService.addNewFoodTrackerUser(usr, true);
+        } catch (Exception e) {
+
+        }
+      }
+      offset += 50;
+    }
+
+    List<String> removeIds = foodTrackerUserService.getAllDeletedUsers(employeeIds);
+    for (String id: removeIds) {
+      foodTrackerUserService.deleteFoodTrackerUserById(id);
+    }
+    return ResponseEntity.ok(null);
+  }
+
+
+  public void getTokenScheduled() throws IOException, URISyntaxException {
+    accessToken = administrationService.getToken(tokenUrl, token, clientId);
+  }
+
+
 }

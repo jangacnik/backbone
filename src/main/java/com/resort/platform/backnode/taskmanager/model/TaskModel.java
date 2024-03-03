@@ -26,10 +26,10 @@ public class TaskModel {
   private String title;
   private String description;
   private ShortUserModel assignee;
+  private List<ShortUserModel> assignees;
   private ShortUserModel completedBy;
   private List<SupervisorRatingModel> supervisorRatings;
   private List<SupervisorCommentModel> supervisorComments;
-  private List<SupervisorSignedModel> supervisorSigned;
   @NotNull
   private LocalDateTime creationTime;
   private LocalDateTime completionTime;
@@ -40,5 +40,6 @@ public class TaskModel {
   private boolean completed;
   @NotNull
   private boolean active;
+  private boolean evaluate;
   private List<TaskCommentModel> comments;
 }

@@ -1,6 +1,7 @@
 package com.resort.platform.backnode.auth.service;
 
 import com.resort.platform.backnode.auth.exceptions.UserAlreadyExistsExceptions;
+import com.resort.platform.backnode.auth.exceptions.UserAuthorizationException;
 import com.resort.platform.backnode.auth.model.User;
 import com.resort.platform.backnode.auth.model.enums.Role;
 import com.resort.platform.backnode.auth.model.rest.request.NewUserRequest;
@@ -82,7 +83,7 @@ public class AuthenticationService implements AuthenticationServiceInterface {
     if (user.getRoles().contains(Role.ADMIN)) {
       return jwtService.generateToken(user);
     }
-    return null;
+    throw new UserAuthorizationException("User does not have the required authorization");
   }
 
   public JwtResponse refresh(String token) {

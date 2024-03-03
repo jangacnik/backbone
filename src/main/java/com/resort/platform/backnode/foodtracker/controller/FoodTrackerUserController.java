@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,6 +37,7 @@ public class FoodTrackerUserController {
    * @param newFoodTrackerUserRequest - employee with departments
    * @return OK if success
    */
+  @PreAuthorize("hasAnyRole('ADMIN')")
   @PostMapping
   public ResponseEntity<Void> addNewFoodTrackerUser(
       @RequestBody NewFoodTrackerUserRequest newFoodTrackerUserRequest) {
@@ -49,6 +51,7 @@ public class FoodTrackerUserController {
    * @param id - ID of employee
    * @return deleted user
    */
+  @PreAuthorize("hasAnyRole('ADMIN')")
   @DeleteMapping("/{id}")
   public ResponseEntity<User> deleteFoodTrackerUser(@PathVariable String id) {
     return ResponseEntity.ok(foodTrackerUserService.deleteFoodTrackerUser(id));
@@ -61,6 +64,7 @@ public class FoodTrackerUserController {
    * @param foodTrackerUserWithDepartment - updated data of user with deparments
    * @return updated user
    */
+  @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
   @PutMapping
   public ResponseEntity<FoodTrackerUserWithDepartment> updateFoodTrackerUser(
       @RequestBody FoodTrackerUserWithDepartment foodTrackerUserWithDepartment) {
@@ -74,6 +78,7 @@ public class FoodTrackerUserController {
    * @param fUser - object with username of user
    * @return FoodTrackerUserWithDepartment of user with given username
    */
+  @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
   @GetMapping
   public ResponseEntity<FoodTrackerUserWithDepartment> getFoodTrackerUser(
       @RequestBody FoodTrackerUserRequest fUser) {
@@ -85,6 +90,7 @@ public class FoodTrackerUserController {
    *
    * @return list of all employees
    */
+  @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
   @GetMapping("/all")
   public ResponseEntity<List<FoodTrackerUserWithDepartment>> getFoodTrackerUser() {
     return ResponseEntity.ok(foodTrackerUserService.getAllFoodTrackerUsers());
@@ -97,6 +103,7 @@ public class FoodTrackerUserController {
    * @param token - jwt token of user
    * @return employee data of user
    */
+  @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
   @GetMapping("/me")
   public ResponseEntity<FoodTrackerUserWithDepartment> getCurretnFoodTrackerUser(
       @RequestHeader(name = "Authorization") String token) {

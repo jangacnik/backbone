@@ -13,11 +13,11 @@ public class ScheduleService {
   private AdministrationController administrationController;
   @Scheduled(cron = "0 0 0 * * *")
   private void generateNewTaskListsForNextDay() throws IOException, URISyntaxException {
-    administrationController.getToken();
+    administrationController.getTokenScheduled();
   }
 
   @Scheduled(cron = "59 59 12,23 * * ?")
   private void updateUsers() throws IOException, URISyntaxException {
-    administrationController.updateEmployeesAndDepartmentsFromPlandayRest();
+    administrationController.updateEmployeesAndDepartmentsFromPlandayRestScheduled();
   }
 }

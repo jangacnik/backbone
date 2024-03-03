@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,6 +29,7 @@ public class ReservationController {
    * @param date - date of the reservations
    * @return List of reservations for given date
    */
+  @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
   @GetMapping("/{date}")
   public ResponseEntity<List<MealReservation>> getReservations(@PathVariable LocalDate date) {
     return ResponseEntity.ok(reservationService.getReservationsByDate(date));
@@ -39,6 +41,7 @@ public class ReservationController {
    * @param token - jwt token of logged in user
    * @return list of reservations
    */
+  @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
   @GetMapping
   public ResponseEntity<List<MealReservation>> getReservationsOfUserForCurrentMonth(
       @RequestHeader(name = "Authorization") String token) {
@@ -51,6 +54,7 @@ public class ReservationController {
    * @param resevationRequest - request object for reservation
    * @return OK if success
    */
+  @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
   @PostMapping
   public ResponseEntity<Void> addReservation(@RequestBody MealReservation resevationRequest) {
     reservationService.addReservationForNextDay(resevationRequest);
@@ -63,6 +67,7 @@ public class ReservationController {
    * @param reservationRequest - existing reservation object
    * @return OK if successful, throws exception if not found
    */
+  @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
   @DeleteMapping
   public ResponseEntity<Void> deleteReservation(@RequestBody MealReservation reservationRequest) {
     reservationService.removeReservation(reservationRequest);

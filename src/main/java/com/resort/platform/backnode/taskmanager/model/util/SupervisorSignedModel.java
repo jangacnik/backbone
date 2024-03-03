@@ -7,7 +7,6 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class SupervisorSignedModel {
-
   private String id;
   private boolean signedBySupervisor;
   private ShortUserModel supervisor;
