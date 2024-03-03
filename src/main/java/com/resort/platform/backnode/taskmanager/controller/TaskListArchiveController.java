@@ -90,13 +90,13 @@ public class TaskListArchiveController {
   }
 
   @PreAuthorize("hasAnyRole('ADMIN')")
-  @PostMapping("/comment")
+  @PutMapping("/comment")
   public ResponseEntity<Object> addComment (@RequestBody TaskCommentRequest taskCommentRequest) {
     return ResponseEntity.ok(taskListArchiveService.commentTask(taskCommentRequest));
   }
 
   @PreAuthorize("hasAnyRole('ADMIN')")
-  @PostMapping("/rate")
+  @PutMapping("/rate")
   public ResponseEntity<Object> addRating (@RequestBody TaskRatingRequest taskRatingRequest) {
     return ResponseEntity.ok(taskListArchiveService.rateTask(taskRatingRequest));
   }

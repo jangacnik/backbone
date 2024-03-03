@@ -117,7 +117,7 @@ public class TaskListArchiveService {
       int index = taskListArchiveModel.getTasks().indexOf(taskModel);
       SupervisorRatingModel supervisorRatingModel = new SupervisorRatingModel(UUID.randomUUID().toString(), taskRatingRequest.getUser(), taskRatingRequest.getRating(), LocalDateTime.now());
       if (taskModel.getSupervisorRatings() != null && !ObjectUtils.isEmpty(taskModel.getSupervisorRatings())) {
-        taskModel.getSupervisorRatings().add(supervisorRatingModel);
+        taskModel.getSupervisorRatings().set(0,supervisorRatingModel);
       } else {
         List<SupervisorRatingModel> supervisorRatingModelList = new ArrayList<>();
         supervisorRatingModelList.add(supervisorRatingModel);
@@ -138,7 +138,7 @@ public class TaskListArchiveService {
       int index = taskListArchiveModel.getTasks().indexOf(taskModel);
       SupervisorCommentModel supervisorCommentModel = new SupervisorCommentModel(UUID.randomUUID().toString(), taskCommentRequest.getUser(), taskCommentRequest.getComment(), LocalDateTime.now());
       if (taskModel.getSupervisorComments() != null && !ObjectUtils.isEmpty(taskModel.getSupervisorComments())) {
-        taskModel.getSupervisorComments().add(supervisorCommentModel);
+        taskModel.getSupervisorComments().set(0,supervisorCommentModel);
       } else {
         List<SupervisorCommentModel> supervisorCommentModelList = new ArrayList<>();
         supervisorCommentModelList.add(supervisorCommentModel);
