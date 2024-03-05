@@ -117,7 +117,16 @@ public class TaskListArchiveService {
       int index = taskListArchiveModel.getTasks().indexOf(taskModel);
       SupervisorRatingModel supervisorRatingModel = new SupervisorRatingModel(UUID.randomUUID().toString(), taskRatingRequest.getUser(), taskRatingRequest.getRating(), LocalDateTime.now());
       if (taskModel.getSupervisorRatings() != null && !ObjectUtils.isEmpty(taskModel.getSupervisorRatings())) {
-        taskModel.getSupervisorRatings().set(0,supervisorRatingModel);
+        Optional<SupervisorRatingModel> supervisorCommentModelOptional = taskModel.getSupervisorRatings().stream().filter((tsk) -> tsk.getSupervisor().getUserId().equals(taskRatingRequest.getUser().getUserId())).findFirst();
+        if (supervisorCommentModelOptional.isPresent()) {
+          supervisorRatingModel = supervisorCommentModelOptional.get();
+          int sIndex = taskModel.getSupervisorRatings().indexOf(supervisorRatingModel);
+          supervisorRatingModel.setCommentTime(LocalDateTime.now());
+          supervisorRatingModel.setRating(taskRatingRequest.getRating());
+          taskModel.getSupervisorRatings().set(sIndex, supervisorRatingModel);
+        } else {
+          taskModel.getSupervisorRatings().add(supervisorRatingModel);
+        }
       } else {
         List<SupervisorRatingModel> supervisorRatingModelList = new ArrayList<>();
         supervisorRatingModelList.add(supervisorRatingModel);
@@ -136,11 +145,22 @@ public class TaskListArchiveService {
       TaskListArchiveModel taskListArchiveModel = taskListArchiveModelOptional.get();
       TaskModel taskModel = taskListArchiveModel.getTasks().stream().filter( task -> taskCommentRequest.getTaskId().equals(task.getId())).findFirst().orElseThrow();
       int index = taskListArchiveModel.getTasks().indexOf(taskModel);
-      SupervisorCommentModel supervisorCommentModel = new SupervisorCommentModel(UUID.randomUUID().toString(), taskCommentRequest.getUser(), taskCommentRequest.getComment(), LocalDateTime.now());
       if (taskModel.getSupervisorComments() != null && !ObjectUtils.isEmpty(taskModel.getSupervisorComments())) {
-        taskModel.getSupervisorComments().set(0,supervisorCommentModel);
+        Optional<SupervisorCommentModel> supervisorCommentModelOptional = taskModel.getSupervisorComments().stream().filter((tsk) -> tsk.getSupervisor().getUserId().equals(taskCommentRequest.getUser().getUserId())).findFirst();
+        if (supervisorCommentModelOptional.isPresent()) {
+          SupervisorCommentModel supervisorCommentModel = supervisorCommentModelOptional.get();
+          int sIndex = taskModel.getSupervisorComments().indexOf(supervisorCommentModel);
+          supervisorCommentModel.setCommentTime(LocalDateTime.now());
+          supervisorCommentModel.setSupervisorComments(taskCommentRequest.getComment());
+          taskModel.getSupervisorComments().set(sIndex, supervisorCommentModel);
+        } else {
+
+          SupervisorCommentModel supervisorCommentModel = new SupervisorCommentModel(UUID.randomUUID().toString(), taskCommentRequest.getUser(), taskCommentRequest.getComment(), LocalDateTime.now());
+          taskModel.getSupervisorComments().add(supervisorCommentModel);
+        }
       } else {
         List<SupervisorCommentModel> supervisorCommentModelList = new ArrayList<>();
+        SupervisorCommentModel supervisorCommentModel = new SupervisorCommentModel(UUID.randomUUID().toString(), taskCommentRequest.getUser(), taskCommentRequest.getComment(), LocalDateTime.now());
         supervisorCommentModelList.add(supervisorCommentModel);
         taskModel.setSupervisorComments(supervisorCommentModelList);
       }
