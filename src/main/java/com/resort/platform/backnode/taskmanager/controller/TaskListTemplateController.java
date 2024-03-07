@@ -39,6 +39,11 @@ public class TaskListTemplateController {
   public ResponseEntity<List<TaskListTemplateModel>> getAllTaskListTemplates() {
     return ResponseEntity.ok(taskListTemplateService.getAllTaskListTemplates());
   }
+  @PreAuthorize("hasAnyRole('ADMIN')")
+  @GetMapping("/{id}")
+  public ResponseEntity<TaskListTemplateModel> getTaskListTemplateById(@PathVariable String id) {
+    return ResponseEntity.ok(taskListTemplateService.getTaskListTemplateById(id));
+  }
 
   @PreAuthorize("hasAnyRole('ADMIN')")
   @GetMapping("/{active}")

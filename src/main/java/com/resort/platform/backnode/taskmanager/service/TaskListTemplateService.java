@@ -27,6 +27,9 @@ public class TaskListTemplateService {
   public List<TaskListTemplateModel> getAllTaskListTemplates() {
     return taskListTemplateRepository.findAll();
   }
+  public TaskListTemplateModel getTaskListTemplateById(String id) {
+    return taskListTemplateRepository.findById(id).orElseThrow();
+  }
 
   public List<TaskListTemplateModel> getAllTaskListTemplatesByActiveStatus(boolean active) {
     return taskListTemplateRepository.findAllTaskListTemplateModelsByActive(active).orElseThrow();
