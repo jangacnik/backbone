@@ -48,26 +48,23 @@ public class AdministrationController {
   private String departmentUrl;
   @Value("${com.resort.platform.backnode.planday.url.employees.get}")
   private String employeesUrl;
-
-
   @Value("${com.resort.platform.backnode.planday.url.employees.shifts.get}")
   private String shiftsUrl;
+
+
   @Autowired
   private AdministrationService administrationService;
   @Autowired
   private DepartmentService departmentService;
-
   @Autowired
   private FoodTrackerUserService foodTrackerUserService;
-
-
   private String accessToken  = null;
+
 
   @PreAuthorize("hasAnyRole('ADMIN')")
   @GetMapping("/token")
   public void getToken() throws IOException, URISyntaxException {
     accessToken = administrationService.getToken(tokenUrl, token, clientId);
-
   }
 
   /**
@@ -84,9 +81,12 @@ public class AdministrationController {
   public ResponseEntity<Void> updateEmployeesAndDepartmentsFromPlandayRest()
       throws IOException, URISyntaxException {
     ArrayList<String> employeeIds = new ArrayList<>();
+    // get acces token
     accessToken = administrationService.getToken(tokenUrl, token, clientId);
+    // fetch departments from planday
     DepartmentResponseModel res = administrationService.getDepartments(departmentUrl, accessToken,
         clientId);
+    // add departments
     for (DepartmentSubModel dep : res.getData()) {
       try {
         departmentService.addNewDepartment(
@@ -97,14 +97,17 @@ public class AdministrationController {
     }
     int total;
     int offset = 0;
+    // get first batch of employees (batches of 50 by default)
     UserResponseModel userResponseModel = administrationService.getEmployees(employeesUrl,
         accessToken, clientId, offset);
     total = userResponseModel.getPaging().getTotal();
     List<Role> roles = new ArrayList<>();
     roles.add(Role.USER);
+    // keep fetching batches of user while are user are not fetched
     while (userResponseModel.getPaging().getOffset() < total) {
       userResponseModel = administrationService.getEmployees(employeesUrl, accessToken, clientId,
           offset);
+      // add all employees to database
       for (EmployeeSubModel emp : userResponseModel.getData()) {
         employeeIds.add(emp.getSalaryIdentifier());
         try {
@@ -124,7 +127,7 @@ public class AdministrationController {
       }
       offset += 50;
     }
-
+    // delete employees that are not anymore in planday
     List<String> removeIds = foodTrackerUserService.getAllDeletedUsers(employeeIds);
     for (String id: removeIds) {
       foodTrackerUserService.deleteFoodTrackerUserById(id);
@@ -137,9 +140,12 @@ public class AdministrationController {
   public ResponseEntity<Object> getAvailableUsers(@PathVariable String date, @PathVariable String dep)
       throws IOException, URISyntaxException {
     accessToken = administrationService.getToken(tokenUrl, token, clientId);
+    // gets shifts from planday
     ShiftsModel shifts = administrationService.getAvailableEmployees(shiftsUrl,accessToken, clientId, dep, date);
+    // filter out shifts that are assigned
     List<ShiftsSubModel> filteredShifts = shifts.getData().stream().filter(sh -> "Assigned".equals(sh.getStatus()) || "PunchclockStarted".equals(sh.getStatus())).toList();
     List<ShiftUserModel> shiftUserModelList = new ArrayList<>();
+    // find users by id and add them to list
     for (ShiftsSubModel sub: filteredShifts) {
     try {
         FoodTrackerUser fd = foodTrackerUserService.getFoodTrackerUserById(sub.getEmployeeId());
@@ -154,13 +160,12 @@ public class AdministrationController {
         String et = e.toString();
     }
     }
-
+    // return list of all available users
     return ResponseEntity.ok(shiftUserModelList);
   }
 
 
-  // FOR SCHEDULED TASK
-
+  // FOR SCHEDULED TASK - CRONJOB
   public ResponseEntity<Void> updateEmployeesAndDepartmentsFromPlandayRestScheduled()
       throws IOException, URISyntaxException {
     ArrayList<String> employeeIds = new ArrayList<>();

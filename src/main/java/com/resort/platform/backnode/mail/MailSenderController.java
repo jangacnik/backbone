@@ -25,7 +25,6 @@ public class MailSenderController {
   private static String SIMPLE_PASSWORD_RESET_TEMPLATE = "New password for your account: %s";
 
 
-  @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
   @PostMapping("/pass/reset")
   public ResponseEntity<Void> resetPassword(@RequestBody PasswordResetRequest passwordResetRequest) {
     String pass = passwordResetService.resetPassword(passwordResetRequest.getEmail());
