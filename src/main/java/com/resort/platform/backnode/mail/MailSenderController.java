@@ -27,8 +27,8 @@ public class MailSenderController {
 
   @PostMapping("/pass/reset")
   public ResponseEntity<Void> resetPassword(@RequestBody PasswordResetRequest passwordResetRequest) {
+    // not encoded new password (encoded password is saved in database)
     String pass = passwordResetService.resetPassword(passwordResetRequest.getEmail());
-
     String body =  String.format(SIMPLE_PASSWORD_RESET_TEMPLATE, pass);
     mailService.sendSimpleMessage(passwordResetRequest.getEmail(), "Password reset", body);
     return ResponseEntity.ok(null);

@@ -128,6 +128,10 @@ public class ScheduledTaskService {
     }
   }
 
+  /**
+   * Cronjob that checks all task of the previous day and takes the ones with the takeover flag
+   * which were not completed and adds them to a new list for the next day
+   */
   @Scheduled(cron = "0 0 0 * * *")
   private void generateTaskListWithTakeoverTasks() {
     Calendar calendar = Calendar.getInstance();

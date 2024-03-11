@@ -31,6 +31,13 @@ public class TaskListArchiveService {
   @Autowired
   private TaskListArchiveRepository taskListArchiveRepository;
 
+  /**
+   * Returns all task lists for the given department and date.
+   *
+   * @param departmentModel data of the department
+   * @param localDate date of the tasks
+   * @return list of TaskListArchiveModels for the given department and date
+   */
   public List<TaskListArchiveModel> getAllUserTasksListByDate(ShortDepartmentModel departmentModel,
       LocalDate localDate) {
     DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm");
@@ -49,12 +56,23 @@ public class TaskListArchiveService {
             Collectors.toList());
   }
 
+  /**
+   * Returns all Tasklist for the given date, not depending on the department
+   *
+   * @param localDate localdate
+   * @return list of TaskListArchiveModel
+   */
   public List<TaskListArchiveModel> getAllTaskByDate(LocalDate localDate) {
     return taskListArchiveRepository
         .findAllByTaskListDate(
             localDate.toString()).orElseThrow();
   }
 
+  /**
+   * Adds assigne to the given task in the given tasklist id
+   *
+   * @param assigneeRequest object with assignee, taskListId and taskId
+   */
   public void addAssignee(AssigneeTaskListRequest assigneeRequest) {
     TaskListArchiveModel archiveModel = taskListArchiveRepository.findById(
         assigneeRequest.getTaskListId()).orElseThrow();
@@ -67,6 +85,12 @@ public class TaskListArchiveService {
     taskListArchiveRepository.save(archiveModel);
   }
 
+  /**
+   * Inverts the status of the task (to complete, not complete)
+   *
+   * @param statusChangeRequest object with user data, taskId and tasklistId
+   * @return
+   */
   public TaskListArchiveModel changeTaskCompletedStatus(
       TaskStatusChangeRequest statusChangeRequest) {
     TaskListArchiveModel archiveModel = taskListArchiveRepository.findById(
@@ -88,6 +112,13 @@ public class TaskListArchiveService {
   }
 
 
+  /**
+   * Methode for migration of already existing Archive tasklists. It migrates the old model to new one.
+   * Migrates single assigne data to a list of assignees. It was requested that tasks should be able
+   * to have multiple assignees. property assignee -> assignees
+   *
+   * @return number of migrated taskslist
+   */
   public int migrateTaskModel() {
     List<TaskListArchiveModel> taskListArchiveModelList = taskListArchiveRepository.findAll();
     int taskListsMigrated = 0;
@@ -109,6 +140,11 @@ public class TaskListArchiveService {
     return taskListsMigrated;
   }
 
+  /**
+   * Adds rating from 1 - 3 to given task by the admin user.
+   * @param taskRatingRequest request with short admin user, tasklistId and taskid
+   * @return updated Task
+   */
   public TaskModel rateTask(TaskRatingRequest taskRatingRequest) {
     Optional<TaskListArchiveModel> taskListArchiveModelOptional = taskListArchiveRepository.findById(taskRatingRequest.getTaskListId());
     if (taskListArchiveModelOptional.isPresent()) {
@@ -139,6 +175,12 @@ public class TaskListArchiveService {
     return null;
   }
 
+  /**
+   * Adds comment of admin user to the list of comments for the given task.
+   *
+   * @param taskCommentRequest object with admin user data, taskid, tasklistid and comment.
+   * @return updated task
+   */
   public TaskModel commentTask(TaskCommentRequest taskCommentRequest) {
     Optional<TaskListArchiveModel> taskListArchiveModelOptional = taskListArchiveRepository.findById(taskCommentRequest.getTaskListId());
     if (taskListArchiveModelOptional.isPresent()) {

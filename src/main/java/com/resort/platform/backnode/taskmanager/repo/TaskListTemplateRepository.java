@@ -6,6 +6,5 @@ import java.util.Optional;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 public interface TaskListTemplateRepository extends MongoRepository<TaskListTemplateModel, String> {
-
   Optional<List<TaskListTemplateModel>> findAllTaskListTemplateModelsByActive(boolean active);
 }

@@ -10,7 +10,6 @@ public class PasswordResetService {
   @Autowired
   private FoodTrackerUserService foodTrackerUserService;
 
-
   public String resetPassword(String email) {
     return foodTrackerUserService.resetFoodTrackerUserPassword(email);
   }

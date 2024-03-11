@@ -118,7 +118,16 @@ public class AdministrationService {
     return Objects.requireNonNull(responseModelResponseEntity.getBody());
   }
 
-
+  /**
+   * Get all available shifts for specified department from planday api
+   *
+   * @param urlString - employee API url
+   * @param token     - access token
+   * @param clientid  - ID of the company
+   * @return List of available shits, contains only ids of employees
+   * @throws IOException        -
+   * @throws URISyntaxException - REST call exception
+   */
   public ShiftsModel getAvailableEmployees(String urlString, String token, String clientid, String depId, String date)
       throws IOException, URISyntaxException {
     RestTemplate restTemplate = new RestTemplate();

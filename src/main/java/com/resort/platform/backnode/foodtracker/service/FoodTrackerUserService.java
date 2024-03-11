@@ -29,6 +29,12 @@ public class FoodTrackerUserService {
   private DepartmentService departmentService;
   private JwtService jwtService;
 
+  /**
+   * Finds all ids of users that are in the database but not in the given list of ids
+   *
+   * @param ids list of ids of users that should be kept in database / list of ids of users in planday
+   * @return list of userIds which should be removed
+   */
   public List<String> getAllDeletedUsers (ArrayList<String> ids) {
     ids.add("0123456789");
     List<String> removeIds = new ArrayList<>();
@@ -94,6 +100,14 @@ public class FoodTrackerUserService {
     throw new UsernameNotFoundException("User not found");
   }
 
+
+  /**
+   * Resets the password of the user with the given email.
+   * New password is a random alphanumeric string of size 12.
+   *
+   * @param email email of user which password should be reset
+   * @return new non-encoded password of the user
+   */
   public String resetFoodTrackerUserPassword(String email) {
     Optional<User> userOptional = userRepository.findUserByEmployeeNumberOrEmail(email,
         email);
@@ -108,6 +122,12 @@ public class FoodTrackerUserService {
     throw new UsernameNotFoundException("User not found");
   }
 
+  /**
+   * Returns FoodTrackerUser by given id (employeeNumber)
+   *
+   * @param id employee number of user
+   * @return FoodtrackerUser object including department
+   */
   public FoodTrackerUserWithDepartment getFoodTrackerUserById(String id) {
     Optional<User> userOptional = userRepository.findById(id);
     if (userOptional.isPresent()) {
@@ -174,6 +194,13 @@ public class FoodTrackerUserService {
     return null;
   }
 
+
+  /**
+   * Deletes user from database by the given id.
+   *
+   * @param id - id of the user (employee number)
+   * @return deleted user or null if no user was found
+   */
   public User deleteFoodTrackerUserById(String id) {
     Optional<User> userOptional = userRepository.deleteUserById(id);
     if (userOptional.isPresent()) {
@@ -228,8 +255,4 @@ public class FoodTrackerUserService {
     }
   }
 
-
-  public void removeUser(ArrayList<String> employeeNumbers) {
-
-  }
 }

@@ -16,7 +16,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class TaskListArchiveModel {
-
   @Id
   private String id;
   @NotBlank

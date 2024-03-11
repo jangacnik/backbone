@@ -36,7 +36,6 @@ public class TaskListArchiveController {
   private TaskListArchiveService taskListArchiveService;
   @Autowired
   private FoodTrackerUserService foodTrackerUserService;
-
   @Autowired
   private DepartmentService departmentService;
 
@@ -48,18 +47,15 @@ public class TaskListArchiveController {
         taskListArchiveService.getAllUserTasksListByDate(request.getDepartment(),
             request.getDate()));
   }
+
   @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
   @GetMapping("/{date}")
   public ResponseEntity<List<TaskListArchiveModel>> getTaskListByUser(@RequestHeader(name = "Authorization") String token, @PathVariable String date) {
-
     FoodTrackerUserWithDepartment usr = foodTrackerUserService.getCurrentUser(token);
     List<Department> userDepartments = departmentService.getAllDepartments();
-
-
     userDepartments = userDepartments.stream().filter(department -> usr.getDepartments()
         .contains(new ShortDepartmentModel(department.getId(),department.getDepartmentName()))).collect(
         Collectors.toList());
-
     List<TaskListArchiveModel> tasks = new java.util.ArrayList<>(Collections.emptyList());
     for (Department dep: userDepartments) {
       tasks.addAll(taskListArchiveService.getAllUserTasksListByDate(new ShortDepartmentModel(dep.getId(), dep.getDepartmentName()),
