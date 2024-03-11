@@ -88,6 +88,16 @@
       <version>3.0.5</version>
     </dependency>
     <dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-context-support</artifactId>
+    <version>6.1.4</version>
+  </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-mail</artifactId>
+      <version>3.2.3</version>
+    </dependency>
+    <dependency>
       <artifactId>jjwt-api</artifactId>
       <groupId>io.jsonwebtoken</groupId>
     </dependency>
