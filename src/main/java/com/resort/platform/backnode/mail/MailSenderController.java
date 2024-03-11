@@ -1,6 +1,8 @@
 package com.resort.platform.backnode.mail;
 
 import com.resort.platform.backnode.mail.models.PasswordResetRequest;
+import com.resort.platform.backnode.mail.service.MailService;
+import com.resort.platform.backnode.mail.service.PasswordResetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
@@ -16,25 +18,23 @@ import org.springframework.web.bind.annotation.RestController;
 public class MailSenderController {
 
   @Autowired
-  private JavaMailSender emailSender;
+  private MailService mailService;
+  @Autowired
+  private PasswordResetService passwordResetService;
 
+  private static String SIMPLE_PASSWORD_RESET_TEMPLATE = "New password for your account: %s";
 
 
   @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
   @PostMapping("/pass/reset")
   public ResponseEntity<Void> resetPassword(@RequestBody PasswordResetRequest passwordResetRequest) {
-    sendSimpleMessage("gacnik.jan@gmail.com", "Password reset", "Test");
+    String pass = passwordResetService.resetPassword(passwordResetRequest.getEmail());
+
+    String body =  String.format(SIMPLE_PASSWORD_RESET_TEMPLATE, pass);
+    mailService.sendSimpleMessage(passwordResetRequest.getEmail(), "Password reset", body);
     return ResponseEntity.ok(null);
   }
 
-  public void sendSimpleMessage(
-      String to, String subject, String text) {
-    SimpleMailMessage message = new SimpleMailMessage();
-    message.setFrom("noreply@vestlia.com");
-    message.setTo(to);
-    message.setSubject(subject);
-    message.setText(text);
-    emailSender.send(message);
-  }
+
 
 }

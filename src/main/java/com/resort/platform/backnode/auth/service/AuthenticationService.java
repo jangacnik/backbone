@@ -96,4 +96,8 @@ public class AuthenticationService implements AuthenticationServiceInterface {
     }
     throw new UsernameNotFoundException("Not found");
   }
+
+  public String encodePassword(String pass) {
+    return passwordEncoder.encode(pass);
+  }
 }

@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -89,6 +90,20 @@ public class FoodTrackerUserService {
       return FoodTrackerUserWithDepartment.builder().departments(departmentNames)
           .firstName(user.getFirstName()).lastName(user.getLastName()).email(user.getEmail())
           .employeeNumber(user.getEmployeeNumber()).roles(user.getRoles()).id(user.getId()).build();
+    }
+    throw new UsernameNotFoundException("User not found");
+  }
+
+  public String resetFoodTrackerUserPassword(String email) {
+    Optional<User> userOptional = userRepository.findUserByEmployeeNumberOrEmail(email,
+        email);
+    if (userOptional.isPresent()) {
+      User user = userOptional.get();
+      String randomStr = RandomStringUtils.random(12, true, true);
+      String encodedPassword = authenticationService.encodePassword(randomStr);
+      user.setPassword(encodedPassword);
+      userRepository.save(user);
+      return randomStr;
     }
     throw new UsernameNotFoundException("User not found");
   }
